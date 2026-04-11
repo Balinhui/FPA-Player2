@@ -15,7 +15,7 @@ public class SystemInfo {
         else systemName = Name.UNKNOWN;
 
         String ver = System.getProperty("os.version");
-        systemVersion = Double.parseDouble(ver);
+        systemVersion = Double.parseDouble(ver.replaceAll("\\.", ""));
 
         String arch = System.getProperty("os.arch");
         if (arch.contains("amd64")) systemArch = Arch.AMD64;
