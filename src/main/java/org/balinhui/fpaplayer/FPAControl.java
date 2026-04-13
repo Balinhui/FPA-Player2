@@ -44,14 +44,20 @@ public class FPAControl {
                 Resources.ImageRes.pause_black,
                 Resources.ImageRes.pause_white
         );
+        FPAScreen.OperableControls.lyricsPane.enableTranslate(!Config.get("lyric.translate").value().bValue);
     }
 
+    int i = 0;
     public void onNext() {
         log.debug("Next Button Pressed");
+        FPAScreen.OperableControls.lyricsPane.scrollToTime(i);
+        //System.out.println(i);
+        i += 10;
     }
 
     public void onOpenSettingWindow() {
         log.debug("Open Setting Button Pressed");
+        FPAScreen.setDarkMode(!Config.get("app.darkMode").value().bValue);
     }
 
     public void onFullScreen(PButton button) {

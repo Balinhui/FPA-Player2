@@ -24,7 +24,9 @@ public class Config {
             "app.tempLib", new ConfigPreference(ConfigType.STR, new ConfigValue("null")),
             "app.darkMode", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false")),
             "app.taskbar", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false")),
-            "app.fullScreen", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))
+            "app.fullScreen", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false")),
+            "lyric.position", new ConfigPreference(ConfigType.STR, new ConfigValue("center")),
+            "lyric.translate", new ConfigPreference(ConfigType.BOOL, new ConfigValue("true"))
     );
 
     private Config() {}
