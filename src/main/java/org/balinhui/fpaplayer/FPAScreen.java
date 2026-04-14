@@ -1,5 +1,8 @@
 package org.balinhui.fpaplayer;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
@@ -16,9 +19,6 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.balinhui.fpaplayer.ui.LyricsPane;
 import org.balinhui.fpaplayer.ui.PButton;
-
-import java.util.List;
-import java.util.TreeMap;
 
 public class FPAScreen extends Application {
 
@@ -40,7 +40,11 @@ public class FPAScreen extends Application {
     private TranslateTransition rightPaneSlideIn;
     private boolean isRightPaneVisible = true;
 
+    private Timeline coverTimeLine;
+
     private FPAControl control;
+
+    private static final double ANIMATION_TIME = 120;//ms
 
     @Override
     public void init() throws Exception {
@@ -94,11 +98,11 @@ public class FPAScreen extends Application {
                     if (newValue.doubleValue() < 500 && isRightPaneVisible) {
                         isRightPaneVisible = false;
                         hideRightPane(rightPane);
-                        bindCover(OperableControls.cover, leftPane, 0.8);
+                        bindCover(OperableControls.cover, leftPane, 0.8, false);
                     } else if (newValue.doubleValue() >= 500 && !isRightPaneVisible) {
                         isRightPaneVisible = true;
+                        bindCover(OperableControls.cover, leftPane, 0.6, false);
                         showRightPane(leftPane, rightPane, mainPane);
-                        bindCover(OperableControls.cover, leftPane, 0.6);
                     }
                 }));
         stage.setMinHeight(370);
@@ -147,11 +151,9 @@ public class FPAScreen extends Application {
         choose.setPrefHeight(45);
         choose.setOnAction(event -> control.onChooseFile());
 
+        OperableControls.lyricsPane = createLyricsPane(rightPane);
 
-        LyricsPane lyricsPane = createLyricsPane(rightPane);
-        OperableControls.lyricsPane = lyricsPane;
-
-        rightPane.getChildren().add(lyricsPane);//choose);
+        rightPane.getChildren().add(choose);
         return rightPane;
     }
 
@@ -167,19 +169,55 @@ public class FPAScreen extends Application {
 
         cover.setClip(clip);
 
-        bindCover(cover, parent, 0.6);
+        bindCover(cover, parent, 0.6, true);
         return cover;
     }
 
-    private void bindCover(ImageView cover, Pane pane, double scaleFactor) {
-        cover.fitWidthProperty().bind(
-                Bindings.createDoubleBinding(() -> pane.getWidth() * scaleFactor,
-                        pane.widthProperty())
-        );
-        cover.fitHeightProperty().bind(
-                Bindings.createDoubleBinding(() -> pane.getHeight() * scaleFactor,
-                        pane.heightProperty())
-        );
+    private void bindCover(ImageView cover, Pane pane, double scaleFactor, boolean isInit) {
+        if (isInit) {
+            cover.fitWidthProperty().bind(
+                    Bindings.createDoubleBinding(() -> pane.getWidth() * scaleFactor,
+                            pane.widthProperty())
+            );
+
+            cover.fitHeightProperty().bind(
+                    Bindings.createDoubleBinding(() -> pane.getHeight() * scaleFactor,
+                            pane.heightProperty())
+            );
+        } else {
+            if (coverTimeLine != null) {
+                coverTimeLine.stop();
+                coverTimeLine = null;
+            }
+
+            cover.fitWidthProperty().unbind();
+            cover.fitHeightProperty().unbind();
+
+            coverTimeLine = new Timeline(
+                    new KeyFrame(Duration.ZERO,
+                            new KeyValue(cover.fitWidthProperty(), cover.getFitWidth()),
+                            new KeyValue(cover.fitHeightProperty(), cover.getFitHeight())
+                    ),
+                    new KeyFrame(Duration.millis(ANIMATION_TIME),
+                            new KeyValue(cover.fitWidthProperty(), pane.getWidth() * scaleFactor),
+                            new KeyValue(cover.fitHeightProperty(), pane.getHeight() * scaleFactor)
+                    )
+            );
+
+            coverTimeLine.setOnFinished(event -> {
+                cover.fitWidthProperty().bind(
+                        Bindings.createDoubleBinding(() -> pane.getWidth() * scaleFactor,
+                                pane.widthProperty())
+                );
+
+                cover.fitHeightProperty().bind(
+                        Bindings.createDoubleBinding(() -> pane.getHeight() * scaleFactor,
+                                pane.heightProperty())
+                );
+            });
+
+            coverTimeLine.play();
+        }
     }
 
     private HBox createLeftButtonBar(Pane parent) {
@@ -248,7 +286,7 @@ public class FPAScreen extends Application {
         fullScreen.setDarkMode(Config.get("app.darkMode").value().bValue);
         fullScreen.setIconWidth(20);
         fullScreen.setIconHeight(20);
-        fullScreen.setOnAction(event -> control.onFullScreen(fullScreen));
+        fullScreen.setOnAction(event -> control.onFullScreen());
         createBindingForBottomButtons(fullScreen, buttonBar);
         buttonBar.getChildren().addAll(openSetting, fullScreen);
         return buttonBar;
@@ -287,30 +325,12 @@ public class FPAScreen extends Application {
                 () -> parent.getHeight() * 0.6,
                 parent.heightProperty()
         ));
-        TreeMap<Long, List<String>> map = new TreeMap<>();
-        map.put(0L, List.of("はぐ (feat. 初音ミク & 可不) - MIMI/初音未来 (初音ミク)/可不 (KAFU)", "QQ音乐享有本翻译作品的著作权"));
-        map.put(10L, List.of("ねぇねぇ神様聞いてくれ", "呐 呐 神啊 请听我说"));
-        map.put(20L, List.of("心にぽっかり空いちゃった", "我的心突然就空出一个洞来"));
-        map.put(30L, List.of("相当辛いな今日だって", "今天也过得颇为艰辛"));
-        map.put(40L, List.of("泣かないように目を瞑る", "只为不让泪水落下而闭上眼睛"));
-        map.put(50L, List.of("なんなんなんにもできないし", "一切都让我感到无能为力"));
-        map.put(60L, List.of("どうやったって笑えないし", "不论如何都笑不出来"));
-        map.put(70L, List.of("責任転嫁は自己嫌悪", "推诿责任只会让我厌恶自己"));
-        map.put(80L, List.of("嗚呼 独りで夢の中", "啊啊 独自一人徜徉于梦境"));
-        map.put(90L, List.of("パっていつかパって", "某天 你在突然间"));
-        map.put(100L, List.of("君が呼び止める", "便喊住了我"));
-        map.put(110L, List.of("ただ夜の奥鼓動の音", "只在深夜感受这份悸动"));
-        map.put(120L, List.of("寂しさ2人で分け合った", "让两人一起分担寂寞"));
-        map.put(130L, List.of("そしたらそしたら大丈夫", "然后告诉彼此已经没关系了"));
-        map.put(140L, List.of("って優しく明日を笑えるの？", "这样就能温柔地笑对明天吗？"));
-        lyricsPane.setLyrics(map);
-
 
         return lyricsPane;
     }
 
     private void initSlideAnimations(Pane leftPane, Pane rightPane, Pane mainPane) {
-        rightPaneSlideOut = new TranslateTransition(Duration.millis(120), rightPane);
+        rightPaneSlideOut = new TranslateTransition(Duration.millis(ANIMATION_TIME), rightPane);
         rightPaneSlideOut.setOnFinished(event -> {
             leftPane.prefWidthProperty().unbind();
             leftPane.prefWidthProperty().bind(mainPane.widthProperty());
@@ -319,7 +339,7 @@ public class FPAScreen extends Application {
             rightPane.setManaged(false);
         });
 
-        rightPaneSlideIn = new TranslateTransition(Duration.millis(120), rightPane);
+        rightPaneSlideIn = new TranslateTransition(Duration.millis(ANIMATION_TIME), rightPane);
     }
 
     private void hideRightPane(Pane pane) {
@@ -339,9 +359,11 @@ public class FPAScreen extends Application {
         rightPaneSlideIn.play();
     }
 
+    /**
+     * 设置界面暗黑模式，不会将值储存
+     */
     public static void setDarkMode(boolean darkMode) {
         if (Config.get("app.darkMode").value().bValue == darkMode) return;
-        Config.get("app.darkMode").value().bValue = darkMode;
         choose.setDarkMode(darkMode);
         pause.setDarkMode(darkMode);
         next.setDarkMode(darkMode);
@@ -349,5 +371,24 @@ public class FPAScreen extends Application {
         fullScreen.setDarkMode(darkMode);
         OperableControls.lyricsPane.setDarkMode(darkMode);
         //TODO 背景深色
+    }
+
+    /**
+     * 设置界面全屏，不会将值储存
+     */
+    public static void setFullScreen(boolean fullScreenValue) {
+        if (Config.get("app.fullScreen").value().bValue == fullScreenValue) return;
+        FPAScreen.OperableControls.mainWindow.setFullScreen(fullScreenValue);
+        if (fullScreenValue) {
+            fullScreen.setImages(
+                    Resources.ImageRes.full_screen_black,
+                    Resources.ImageRes.full_screen_white
+            );
+        } else {
+            fullScreen.setImages(
+                    Resources.ImageRes.cancel_full_screen_black,
+                    Resources.ImageRes.cancel_full_screen_white
+            );
+        }
     }
 }

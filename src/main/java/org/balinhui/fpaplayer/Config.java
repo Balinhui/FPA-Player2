@@ -16,17 +16,17 @@ public class Config {
     private static final String configFileName = "config.properties";
     private static Properties ppt;
     private static boolean loaded = false;
-    private static final Map<String, ConfigPreference> configList = Map.of(
-            "app.height", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("-1")),
-            "app.width", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("-1")),
-            "app.x", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("-1")),
-            "app.y", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("-1")),
-            "app.tempLib", new ConfigPreference(ConfigType.STR, new ConfigValue("null")),
-            "app.darkMode", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false")),
-            "app.taskbar", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false")),
-            "app.fullScreen", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false")),
-            "lyric.position", new ConfigPreference(ConfigType.STR, new ConfigValue("center")),
-            "lyric.translate", new ConfigPreference(ConfigType.BOOL, new ConfigValue("true"))
+    private static final Map<String, ConfigPreference> configList = Map.ofEntries(
+            Map.entry("app.height", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("-1"))),
+            Map.entry("app.width", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("-1"))),
+            Map.entry("app.x", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("-1"))),
+            Map.entry("app.y", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("-1"))),
+            Map.entry("app.tempLib", new ConfigPreference(ConfigType.STR, new ConfigValue("null"))),
+            Map.entry("app.darkMode", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
+            Map.entry("app.taskbar", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
+            Map.entry("app.fullScreen", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
+            Map.entry("lyric.position", new ConfigPreference(ConfigType.STR, new ConfigValue("center"))),
+            Map.entry("lyric.translate", new ConfigPreference(ConfigType.BOOL, new ConfigValue("true")))
     );
 
     private Config() {}
@@ -68,6 +68,7 @@ public class Config {
             log.error("储存配置失败");
             System.exit(-2);
         }
+        log.debug("储存配置成功");
     }
 
     public static ConfigPreference get(String key) {

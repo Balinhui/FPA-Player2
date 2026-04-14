@@ -135,4 +135,9 @@ public class LyricLine extends VBox {
     public long getTime() {
         return time;
     }
+
+    public void release() {
+        getChildren().clear();
+        labels.clear();
+    }
 }

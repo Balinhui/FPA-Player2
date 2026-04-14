@@ -31,7 +31,9 @@ public class FPAControl {
     }
 
     public void stop() {
+        log.trace("停止开始");
         Config.storeConfig();
+        log.trace("停止结束");
     }
 
     public void onChooseFile() {
@@ -44,37 +46,19 @@ public class FPAControl {
                 Resources.ImageRes.pause_black,
                 Resources.ImageRes.pause_white
         );
-        FPAScreen.OperableControls.lyricsPane.enableTranslate(!Config.get("lyric.translate").value().bValue);
     }
 
-    int i = 0;
     public void onNext() {
         log.debug("Next Button Pressed");
-        FPAScreen.OperableControls.lyricsPane.scrollToTime(i);
-        //System.out.println(i);
-        i += 10;
     }
 
     public void onOpenSettingWindow() {
         log.debug("Open Setting Button Pressed");
-        FPAScreen.setDarkMode(!Config.get("app.darkMode").value().bValue);
     }
 
-    public void onFullScreen(PButton button) {
-        if (Config.get("app.fullScreen").value().bValue) {
-            Config.set("app.fullScreen", false);
-            FPAScreen.OperableControls.mainWindow.setFullScreen(false);
-            button.setImages(
-                    Resources.ImageRes.full_screen_black,
-                    Resources.ImageRes.full_screen_white
-            );
-        } else {
-            Config.set("app.fullScreen", true);
-            FPAScreen.OperableControls.mainWindow.setFullScreen(true);
-            button.setImages(
-                    Resources.ImageRes.cancel_full_screen_black,
-                    Resources.ImageRes.cancel_full_screen_white
-            );
-        }
+    public void onFullScreen() {
+        boolean cValue = Config.get("app.fullScreen").value().bValue;
+        FPAScreen.setFullScreen(!cValue);
+        Config.set("app.fullScreen", !cValue);
     }
 }

@@ -56,7 +56,6 @@ public class LyricsPane extends ScrollPane {
     }
 
     public void setLyrics(TreeMap<Long, List<String>> lyrics) {
-        this.lyricsContainer.getChildren().clear();
         addPlaceholderComponents();
         for (Map.Entry<Long, List<String>> entry : lyrics.entrySet()) {
             LyricLine lyricLine = new LyricLine(entry.getKey(), entry.getValue().toArray(value -> new String[0]));
@@ -153,11 +152,20 @@ public class LyricsPane extends ScrollPane {
     }
 
     /**
-     * 启用，关闭歌词，此会将值储存起来
+     * 启用，关闭歌词，不会将值储存起来
      */
     public void enableTranslate(boolean enable) {
         realLyrics.forEach(lyricLine -> lyricLine.setDisplayTranslate(enable));
-        scrollToLine(currentLine, true, 100);
-        Config.set("lyric.translate", enable);
+        if (currentLine > -1)
+            scrollToLine(currentLine, true, 100);
+    }
+
+    public void release() {
+        this.realLyrics.forEach(LyricLine::release);
+        this.lyricsContainer.getChildren().clear();
+        this.realLyrics.clear();
+        this.scrollTimeLine = null;
+        this.currentLine = -1;
+        this.lastCall = 0;
     }
 }
