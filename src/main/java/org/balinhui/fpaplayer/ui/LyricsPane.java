@@ -10,7 +10,6 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import org.balinhui.fpaplayer.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,18 +72,19 @@ public class LyricsPane extends ScrollPane {
     }
 
     public void setDarkMode(boolean darkMode) {
+        if (realLyrics.isEmpty()) return;
         realLyrics.forEach(lyricLine -> lyricLine.setDarkMode(darkMode));
     }
 
     /**
-     * 改变歌词位置，此会将值储存起来
+     * 改变歌词位置，不会将值储存起来
      * @param position 包含 {@code center, left, right}
      */
     public void changePosition(String position) {
+        if (realLyrics.isEmpty()) return;
         if (!position.matches("center") && !position.matches("left") && !position.matches("right"))
             throw new IllegalArgumentException("position的值未知");
         realLyrics.forEach(lyricLine -> lyricLine.changePosition(position));
-        Config.set("lyric.position", position);
     }
 
     private void scrollToLine(int lineIndex, boolean isChangePosition, double ms) {
@@ -155,7 +155,22 @@ public class LyricsPane extends ScrollPane {
      * 启用，关闭歌词，不会将值储存起来
      */
     public void enableTranslate(boolean enable) {
+        if (realLyrics.isEmpty()) return;
         realLyrics.forEach(lyricLine -> lyricLine.setDisplayTranslate(enable));
+        if (currentLine > -1)
+            scrollToLine(currentLine, true, 100);
+    }
+
+    public void bindLyrics(boolean binding) {
+        if (realLyrics.isEmpty()) return;
+        realLyrics.forEach(lyricLine -> lyricLine.setBinding(binding));
+        if (currentLine > -1)
+            scrollToLine(currentLine, true, 100);
+    }
+
+    public void setLyricsSize(double size) {
+        if (realLyrics.isEmpty()) return;
+        realLyrics.forEach(lyricLine -> lyricLine.setLyricFontSize(size));
         if (currentLine > -1)
             scrollToLine(currentLine, true, 100);
     }

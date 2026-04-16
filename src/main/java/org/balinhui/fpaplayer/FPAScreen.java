@@ -20,6 +20,9 @@ import javafx.util.Duration;
 import org.balinhui.fpaplayer.ui.LyricsPane;
 import org.balinhui.fpaplayer.ui.PButton;
 
+import java.util.List;
+import java.util.TreeMap;
+
 public class FPAScreen extends Application {
 
     public static class OperableControls {
@@ -153,7 +156,7 @@ public class FPAScreen extends Application {
 
         OperableControls.lyricsPane = createLyricsPane(rightPane);
 
-        rightPane.getChildren().add(choose);
+        rightPane.getChildren().add(OperableControls.lyricsPane);//choose);
         return rightPane;
     }
 
@@ -325,6 +328,12 @@ public class FPAScreen extends Application {
                 () -> parent.getHeight() * 0.6,
                 parent.heightProperty()
         ));
+
+        TreeMap<Long, List<String>> l = new TreeMap<>();
+        l.put(0L, List.of("示例歌词", "示例翻译"));
+        l.put(9L, List.of("示例歌词1", "示例翻译1"));
+
+        lyricsPane.setLyrics(l);
 
         return lyricsPane;
     }

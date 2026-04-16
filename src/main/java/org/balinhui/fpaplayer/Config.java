@@ -26,7 +26,9 @@ public class Config {
             Map.entry("app.taskbar", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
             Map.entry("app.fullScreen", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
             Map.entry("lyric.position", new ConfigPreference(ConfigType.STR, new ConfigValue("center"))),
-            Map.entry("lyric.translate", new ConfigPreference(ConfigType.BOOL, new ConfigValue("true")))
+            Map.entry("lyric.translate", new ConfigPreference(ConfigType.BOOL, new ConfigValue("true"))),
+            Map.entry("lyric.binding", new ConfigPreference(ConfigType.BOOL, new ConfigValue("true"))),
+            Map.entry("lyric.fontSize", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("20")))
     );
 
     private Config() {}
@@ -135,6 +137,8 @@ public class Config {
 
     private static boolean readForBoolean(String name, String defaultValue) {
         String v = ppt.getProperty(name, defaultValue);
+        if (!v.matches("true") && !v.matches("false"))
+            v = defaultValue;
         return Boolean.parseBoolean(v);
     }
 

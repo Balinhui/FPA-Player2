@@ -25,6 +25,8 @@ public class LyricLine extends VBox {
     private static final Paint GRAY_DARK = Color.rgb(65, 65, 65);
     private final double BLUE_RADIUS = 3.0;
     private final double RATE = 0.06;
+    private final double MAX_FONT_SIZE = 40;
+
     /**
      * 创建一行歌词
      * @param time 歌词的时间戳，毫秒值
@@ -59,14 +61,19 @@ public class LyricLine extends VBox {
             if (Config.get("app.darkMode").value().bValue) l.setTextFill(GRAY_WHITE);
             else l.setTextFill(GRAY_DARK);
 
-            if (i == 0) l.fontProperty().bind(Bindings.createObjectBinding(() -> {
-                double max = 40;
-                return new Font(Math.min(max, getWidth() * RATE));
-            }, widthProperty()));
-            else l.fontProperty().bind(Bindings.createObjectBinding(() -> {
-                double max = 30;
-                return new Font(Math.min(max, getWidth() * RATE - 5));
-            }, widthProperty()));
+            //通过配置文件设置是否绑定布局容器
+            if (Config.get("lyric.binding").value().bValue) {
+                if (i == 0) l.fontProperty().bind(Bindings.createObjectBinding(() ->
+                        new Font(Math.min(MAX_FONT_SIZE, getWidth() * RATE)), widthProperty()));
+                else l.fontProperty().bind(Bindings.createObjectBinding(() ->
+                        new Font(Math.min(MAX_FONT_SIZE - 5, getWidth() * RATE - 5)), widthProperty()));
+            } else {
+                double size = Config.get("lyric.fontSize").value().dValue;
+                size = Math.min(size, MAX_FONT_SIZE);
+
+                if (i == 0) l.setFont(new Font(size));
+                else l.setFont(new Font(size - 5));
+            }
             getChildren().add(l);
             labels.add(l);
         }
@@ -130,6 +137,37 @@ public class LyricLine extends VBox {
                 getChildren().addAll(labels.get(1));
         } else
             getChildren().remove(1, getChildren().size());
+    }
+
+    public void setBinding(boolean binding) {
+        if (labels.getFirst().fontProperty().isBound() == binding) return;
+        for (int i = 0; i < labels.size(); i++) {
+            if (binding) {
+                labels.get(i).setFont(null);
+
+                if (i == 0) labels.get(i).fontProperty().bind(Bindings.createObjectBinding(() ->
+                        new Font(Math.min(MAX_FONT_SIZE, getWidth() * RATE)), widthProperty()));
+                else labels.get(i).fontProperty().bind(Bindings.createObjectBinding(() ->
+                        new Font(Math.min(MAX_FONT_SIZE - 5, getWidth() * RATE - 5)), widthProperty()));
+            } else {
+                labels.get(i).fontProperty().unbind();
+                double size = Config.get("lyric.fontSize").value().dValue;
+                size = Math.min(size, MAX_FONT_SIZE);
+
+                if (i == 0) labels.get(i).setFont(new Font(size));
+                else labels.get(i).setFont(new Font(size - 5));
+            }
+        }
+    }
+
+    public void setLyricFontSize(double size) {
+        if (labels.getFirst().fontProperty().isBound()) return;
+        for (int i = 0; i < labels.size(); i++) {
+            size = Math.min(size, MAX_FONT_SIZE);
+
+            if (i == 0) labels.get(i).setFont(new Font(size));
+            else labels.get(i).setFont(new Font(size - 5));
+        }
     }
 
     public long getTime() {
