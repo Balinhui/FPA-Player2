@@ -8,16 +8,18 @@ public class SongInfo {
     public int sampleRate;
     public byte[] cover;
     public Map<String, String> metadata;
-    public float durationSeconds;
+    public double durationSeconds;
+    public long totalSamples;
     public boolean isPlanar;
 
-    public SongInfo(int channels, int sampleFormat, int sampleRate, byte[] cover, Map<String, String> metadata, float durationSeconds, boolean isPlanar) {
+    public SongInfo(int channels, int sampleFormat, int sampleRate, byte[] cover, Map<String, String> metadata, double durationSeconds, long totalSamples, boolean isPlanar) {
         this.channels = channels;
         this.sampleFormat = sampleFormat;
         this.sampleRate = sampleRate;
         this.cover = cover;
         this.metadata = metadata;
         this.durationSeconds = durationSeconds;
+        this.totalSamples = totalSamples;
         this.isPlanar = isPlanar;
     }
 

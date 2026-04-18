@@ -37,6 +37,7 @@ public class FPAScreen extends Application {
     private static PButton next;
     private static PButton openSetting;
     private static PButton fullScreen;
+    private static VBox rightPane;
 
     private TranslateTransition rightPaneSlideOut;
     private TranslateTransition rightPaneSlideIn;
@@ -112,7 +113,7 @@ public class FPAScreen extends Application {
         stage.show();
         OperableControls.mainWindow = stage;
         control.onWindowShow();
-        stage.setOnCloseRequest(control::closeWindow);
+        stage.setOnCloseRequest(event -> control.closeWindow());
         //TODO 设置背景
     }
 
@@ -135,7 +136,7 @@ public class FPAScreen extends Application {
     }
 
     private VBox createRightPane(Pane parent) {
-        VBox rightPane = new VBox();
+        rightPane = new VBox();
         rightPane.setPadding(new Insets(10, 10, 10, 10));
         HBox.setHgrow(rightPane, Priority.ALWAYS);
         rightPane.prefWidthProperty().bind(parent.widthProperty().divide(2));
@@ -243,7 +244,7 @@ public class FPAScreen extends Application {
         pause.setDarkMode(Config.get("app.darkMode").value().bValue);
         pause.setIconHeight(20);
         pause.setIconWidth(20);
-        pause.setOnAction(event -> control.onPause(pause));
+        pause.setOnAction(event -> control.onPause());
         createBindingForBottomButtons(pause, buttonBar);
 
         next = new PButton(Resources.ImageRes.next_black, Resources.ImageRes.next_white);
@@ -391,6 +392,30 @@ public class FPAScreen extends Application {
             fullScreen.setImages(
                     Resources.ImageRes.full_screen_black,
                     Resources.ImageRes.full_screen_white
+            );
+        }
+    }
+
+    public static void setDisplayLyrics(boolean flag) {
+        if (flag) {
+            rightPane.getChildren().clear();
+            rightPane.getChildren().add(OperableControls.lyricsPane);
+        } else {
+            rightPane.getChildren().clear();
+            rightPane.getChildren().add(choose);
+        }
+    }
+
+    public static void setPauseButton(boolean play) {
+        if (play) {
+            pause.setImages(
+                    Resources.ImageRes.pause_black,
+                    Resources.ImageRes.pause_white
+            );
+        } else {
+            pause.setImages(
+                    Resources.ImageRes.play_black,
+                    Resources.ImageRes.play_white
             );
         }
     }

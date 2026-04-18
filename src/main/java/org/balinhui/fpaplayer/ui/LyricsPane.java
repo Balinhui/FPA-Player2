@@ -21,7 +21,7 @@ public class LyricsPane extends ScrollPane {
     private final List<LyricLine> realLyrics = new ArrayList<>();
     private Timeline scrollTimeLine;
     private int currentLine = -1;
-    private long lastCall = 0;
+    private long latestCall = 0;
 
     public LyricsPane(VBox box) {
         super(box);
@@ -62,7 +62,6 @@ public class LyricsPane extends ScrollPane {
             this.lyricsContainer.getChildren().add(lyricLine);
         }
         addPlaceholderComponents();
-        realLyrics.getFirst().setHighlight(true);
     }
 
     private void addPlaceholderComponents() {
@@ -88,9 +87,9 @@ public class LyricsPane extends ScrollPane {
     }
 
     private void scrollToLine(int lineIndex, boolean isChangePosition, double ms) {
-        if (isChangePosition && System.currentTimeMillis() - lastCall < 500)
+        if (isChangePosition && System.nanoTime() - latestCall < 500000000)
             return;
-        lastCall = System.currentTimeMillis();
+        latestCall = System.nanoTime();
         if (lineIndex >= realLyrics.size()) return;
         if (scrollTimeLine != null) {
             scrollTimeLine.stop();
@@ -181,6 +180,6 @@ public class LyricsPane extends ScrollPane {
         this.realLyrics.clear();
         this.scrollTimeLine = null;
         this.currentLine = -1;
-        this.lastCall = 0;
+        this.latestCall = 0;
     }
 }

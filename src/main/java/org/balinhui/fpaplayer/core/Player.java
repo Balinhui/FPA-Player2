@@ -21,20 +21,22 @@ import static org.bytedeco.ffmpeg.global.avutil.AV_SAMPLE_FMT_FLT;
 
 public class Player implements Runnable {
     private static final Logger log = LogManager.getLogger(Player.class);
-    private static final Player instance = new Player();
+    private static Player instance;
 
     private final Buffer buffer;
     private int deviceId;
     private int maxOutputChannels;
     private int maxOutputSampleRate;
     private BlockingStream stream;
-    private Event onPerSongFinish, onPlayFinish;
+    private Event onPerSongFinish;
+    private final Event onPlayFinish;
     private final ExecutorService singleThread;//player的唯一线程，一切与portaudio有关的操作都将在这里进行
 
     public static boolean isWasapiSupported;
 
-    private Player() {
+    private Player(Event onPlayFinish) {
         buffer = Buffer.getInstance();
+        this.onPlayFinish = onPlayFinish;
         //初始化Play的线程
         ThreadFactory factory = r -> new Thread(r, "Play Thread");
         singleThread = Executors.newSingleThreadExecutor(factory);
@@ -53,7 +55,8 @@ public class Player implements Runnable {
         });
     }
 
-    public static Player getInstance() {
+    public static Player getInstance(Event onPlayFinish) {
+        if (instance == null) instance = new Player(onPlayFinish);
         return instance;
     }
 
@@ -174,9 +177,8 @@ public class Player implements Runnable {
                 info.outputLatency, info.sampleRate);
     }
 
-    public void start(Event onPerSongFinish, Event onPlayFinish) {
+    public void start(Event onPerSongFinish) {
         this.onPerSongFinish = onPerSongFinish;
-        this.onPlayFinish = onPlayFinish;
         singleThread.submit(this);
     }
 
@@ -207,10 +209,11 @@ public class Player implements Runnable {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            if (paused &&
-                    (CurrentStatus.stateIs(CurrentStatus.States.STOP) || CurrentStatus.stateIs(CurrentStatus.States.CLOSE))) {
-                buffer.clear();
-                break;
+            if (paused) {
+                if (CurrentStatus.stateIs(CurrentStatus.States.CLOSE)) {
+                    buffer.clear();
+                    break;
+                }
             }
 
             Buffer.Data data = buffer.takeData();

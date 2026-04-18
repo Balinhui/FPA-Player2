@@ -1,7 +1,7 @@
 package org.balinhui.fpaplayer;
 
+import javafx.application.Platform;
 import javafx.scene.image.Image;
-import javafx.stage.WindowEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.balinhui.fpaplayer.core.CurrentStatus;
@@ -13,8 +13,9 @@ import org.balinhui.fpaplayer.info.SongInfo;
 import org.balinhui.fpaplayer.info.SystemInfo;
 import org.balinhui.fpaplayer.nativeapis.Global;
 import org.balinhui.fpaplayer.nativeapis.MessageFlags;
-import org.balinhui.fpaplayer.ui.PButton;
+import org.balinhui.fpaplayer.ui.UIPlayer;
 import org.balinhui.fpaplayer.util.Config;
+import org.balinhui.fpaplayer.util.Lyrics;
 import org.balinhui.fpaplayer.util.NativeLibraryLoader;
 
 import java.io.ByteArrayInputStream;
@@ -26,6 +27,7 @@ public class FPAControl {
 
     private Decoder decoder;
     private Player player;
+    private UIPlayer uiPlayer;
 
 
 
@@ -40,7 +42,7 @@ public class FPAControl {
         NativeLibraryLoader.load(Resources.LibraryRes.libs);
 
         decoder = Decoder.getInstance();
-        player = Player.getInstance();
+        player = Player.getInstance(createOnPlayFinishHandler());
         log.trace("初始化结束");
     }
 
@@ -55,7 +57,7 @@ public class FPAControl {
         }
     }
 
-    public void closeWindow(WindowEvent event) {
+    public void closeWindow() {
         if (!FPAScreen.OperableControls.mainWindow.isMaximized() &&
         !FPAScreen.OperableControls.mainWindow.isFullScreen()) {
             Config.set("app.x", FPAScreen.OperableControls.mainWindow.getX());
@@ -67,7 +69,11 @@ public class FPAControl {
 
     public void stop() {
         log.trace("停止开始");
-        CurrentStatus.stateTo(CurrentStatus.States.CLOSE);
+        if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) || CurrentStatus.stateIs(CurrentStatus.States.PAUSE)) {
+            CurrentStatus.stateTo(CurrentStatus.States.CLOSE);
+            if (uiPlayer != null)
+                uiPlayer.stop();
+        }
         Config.storeConfig();
         player.terminate();
         Runtime.getRuntime().addShutdownHook(new Thread(NativeLibraryLoader::cleanup));
@@ -93,16 +99,21 @@ public class FPAControl {
         inputPaths(paths);
     }
 
-    public void onPause(PButton button) {
-        log.debug("Pause Button Pressed");
-        button.setImages(
-                Resources.ImageRes.pause_black,
-                Resources.ImageRes.pause_white
-        );
+    public void onPause() {
+        if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING)) {
+            CurrentStatus.stateTo(CurrentStatus.States.PAUSE);
+            uiPlayer.pause();
+            FPAScreen.setPauseButton(false);
+        } else if (CurrentStatus.stateIs(CurrentStatus.States.PAUSE)) {
+            CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
+            uiPlayer.syncTime( (long) CurrentStatus.getCurrentTimeMillis());
+            uiPlayer.resume();
+            FPAScreen.setPauseButton(true);
+        }
     }
 
     public void onNext() {
-        log.debug("Next Button Pressed");
+        CurrentStatus.stateTo(CurrentStatus.States.NEXT);
     }
 
     public void onOpenSettingWindow() {
@@ -124,7 +135,7 @@ public class FPAControl {
         SongInfo song = decoder.read(path);
         if (song == null) return;
         OutputInfo output = player.read(song);
-        playSong(song, output, null, null, null);
+        playSong(song, output, null, null);
     }
 
     private void processFiles(String[] paths) {
@@ -132,11 +143,33 @@ public class FPAControl {
     }
 
     private void playSong(SongInfo song, OutputInfo output, Event onDecodeFinish,
-                          Event onPerSongFinish, Event onPlayFinish) {
-        CurrentStatus.resetTime();
+                          Event onPerSongFinish) {
+        CurrentStatus.resetTime(song.durationSeconds, song.totalSamples);
         decoder.start(output, onDecodeFinish);
-
+        FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
+        FPAScreen.setDisplayLyrics(true);
         FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
-        player.start(onPerSongFinish, onPlayFinish);
+        FPAScreen.setPauseButton(true);
+        uiPlayer = new UIPlayer(song.durationSeconds * 1000,
+                FPAScreen.OperableControls.lyricsPane,
+                FPAScreen.OperableControls.progressBar);
+
+
+        uiPlayer.play();
+        player.start(onPerSongFinish);
+    }
+
+    private Event createOnPlayFinishHandler() {
+        return v -> {
+            if (uiPlayer != null)
+                uiPlayer.stop();
+            Platform.runLater(() -> {
+                FPAScreen.setDisplayLyrics(false);
+                FPAScreen.OperableControls.cover.setImage(Resources.ImageRes.cover);
+                FPAScreen.OperableControls.progressBar.setProgress(-1);
+                FPAScreen.setPauseButton(false);
+            });
+            FPAScreen.OperableControls.lyricsPane.release();
+        };
     }
 }

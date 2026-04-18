@@ -6,9 +6,9 @@ public class CurrentStatus {
     private static final AtomicReference<States> state = new AtomicReference<>(States.STOP);
 
     private static double durationSeconds;
-
+    private static long totalSamples;
     private static int playedSamples;
-    private static double currentTimeSeconds;
+    private static double currentTimeMillis;
 
     public static synchronized void stateTo(States newState) {
         state.set(newState);
@@ -28,25 +28,32 @@ public class CurrentStatus {
         return flag;
     }
 
-    public static void setDurationSeconds(double durationSeconds) {
-        CurrentStatus.durationSeconds = durationSeconds;
-    }
-
     public static void updateTime(int samples) {
         CurrentStatus.playedSamples += samples;
-        CurrentStatus.currentTimeSeconds = (double) playedSamples / durationSeconds;
+        CurrentStatus.currentTimeMillis = (double) playedSamples / totalSamples * durationSeconds * 1000;
     }
 
-    public static void resetTime() {
+    public static void resetTime(double durationSeconds, long totalSamples) {
+        CurrentStatus.durationSeconds = durationSeconds;
+        CurrentStatus.totalSamples = totalSamples;
         CurrentStatus.playedSamples = 0;
-        CurrentStatus.currentTimeSeconds = 0.0;
+        CurrentStatus.currentTimeMillis = 0.0;
     }
 
-    public static double getCurrentTimeSeconds() {
-        return currentTimeSeconds;
+    public static double getCurrentTimeMillis() {
+        return currentTimeMillis;
     }
 
     public enum States {
-        PLAYING, NEXT, PAUSE, STOP, CLOSE
+        //指示播放中状态
+        PLAYING,
+        //当点击下一首时，设置为此状态
+        NEXT, 
+        //当暂停时，设置为此状态
+        PAUSE,
+        //当未处于播放时在此状态
+        STOP,
+        //关闭窗口时指示此状态
+        CLOSE
     }
 }

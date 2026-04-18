@@ -128,13 +128,15 @@ public class Decoder implements Runnable {
                 }
                 log.trace("获取封面");
             }
+            double totalDurationSeconds = fmtCtx.duration() / (double) AV_TIME_BASE;
             return new SongInfo(
                     codecPar.ch_layout().nb_channels(),
                     codecPar.format(),
                     codecPar.sample_rate(),
                     coverData,
                     getMetadata(fmtCtx, stream),
-                    fmtCtx.duration() / (float) AV_TIME_BASE,
+                    totalDurationSeconds,
+                    (long) (totalDurationSeconds * codecPar.sample_rate()),
                     av_sample_fmt_is_planar(codecPar.format()) == 1
             );
         } finally {
@@ -314,10 +316,15 @@ public class Decoder implements Runnable {
                  CurrentStatus.stateIs(CurrentStatus.States.NEXT))) {
                 buffer.putEndInfo(i + 1);
                 onDecodeFinish.handle(i + 1);//对下一首歌预读
-                CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
+                if (CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
+                    CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
+                    buffer.clear();
+                }
             } else if (CurrentStatus.stateIs(CurrentStatus.States.CLOSE)) {
                 buffer.clear();
                 log.info("强制退出，清空缓冲区");
+            } else if (CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
+                buffer.clear();
             }
             if (!CurrentStatus.stateIs(CurrentStatus.States.CLOSE))
                 CurrentStatus.stateTo(CurrentStatus.States.STOP);
