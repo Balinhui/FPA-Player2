@@ -1,7 +1,8 @@
-package org.balinhui.fpaplayer;
+package org.balinhui.fpaplayer.util;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.balinhui.fpaplayer.Launcher;
 
 import java.io.File;
 import java.io.FileInputStream;

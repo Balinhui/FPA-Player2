@@ -4,4 +4,5 @@ module org.balinhui.fpaplayer {
 
     exports org.balinhui.fpaplayer;
     exports org.balinhui.fpaplayer.ui;
+    exports org.balinhui.fpaplayer.util;
 }

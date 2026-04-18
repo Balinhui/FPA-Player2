@@ -1,6 +1,7 @@
 package org.balinhui.fpaplayer;
 
 import javafx.application.Application;
+import org.balinhui.fpaplayer.util.Config;
 
 public class Launcher {
 
@@ -18,6 +19,8 @@ public class Launcher {
      * -2 IO错误
      * <p>
      * -3 权限不足
+     * <p>
+     * -4 重要文件未找到
      * @param exitCode 有如上值
      */
     public static void exitApplication(int exitCode) {

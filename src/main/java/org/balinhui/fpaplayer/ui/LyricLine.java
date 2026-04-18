@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import org.balinhui.fpaplayer.Config;
+import org.balinhui.fpaplayer.util.Config;
 
 import java.util.ArrayList;
 import java.util.List;
