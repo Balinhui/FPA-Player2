@@ -2,6 +2,10 @@ package org.balinhui.fpaplayer;
 
 import javafx.scene.image.Image;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 @SuppressWarnings("all")
 public class Resources {
     public static class ImageRes {
@@ -23,5 +27,15 @@ public class Resources {
     public static class StringRes {
         public static final String title = "FPA Player";
         public static final String choose_file = "选择文件";
+    }
+
+    public static class SuffixNameRes {
+        public static final List<String> suffix_names = List.of(".mp3", ".flac", ".ogg", ".wav", ".m4a");
+    }
+
+    public static class LibraryRes {
+        public static final Map<String, List<SystemInfo.Name>> libs = new LinkedHashMap<>(Map.of(
+                "global", List.of(SystemInfo.Name.WINDOWS, SystemInfo.Name.MACOS, SystemInfo.Name.LINUX)
+        ));
     }
 }
