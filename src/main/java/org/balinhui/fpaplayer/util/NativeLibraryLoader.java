@@ -1,7 +1,9 @@
 package org.balinhui.fpaplayer.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.balinhui.fpaplayer.Launcher;
-import org.balinhui.fpaplayer.SystemInfo;
+import org.balinhui.fpaplayer.info.SystemInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,9 +13,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NativeLibraryLoader {
-
-    private static final String TEMP_DIR_PREFIX = "fpaplayer_native";
-    private static final File tempDir;
+    private static final Logger log = LogManager.getLogger(NativeLibraryLoader.class);
+    private static final String TEMP_DIR_PREFIX = "fpaplayer_native-";
+    private static File tempDir;
     private static final Set<String> loadedLibraries = ConcurrentHashMap.newKeySet();
 
     private NativeLibraryLoader() {}
@@ -43,7 +45,7 @@ public class NativeLibraryLoader {
             }
 
             if (loadedLibraries.contains(libName)) {
-                System.out.println("库已加载: " + libName);
+                log.debug("库已加载: {}", libName);
                 continue;
             }
 
@@ -65,7 +67,7 @@ public class NativeLibraryLoader {
             saveLoadedPaths(loadedPaths);
         }
 
-        System.out.println("本地库加载完成，共加载 " + loadedLibraries.size() + " 个库");
+        log.debug("本地库加载完成，共加载 {} 个库", loadedLibraries.size());
     }
 
     private static Map<String, String> parseExistingPaths(String tempLibs) {
@@ -114,13 +116,15 @@ public class NativeLibraryLoader {
             return false;
         }
 
+        tempDir = libFile.getParentFile();
+
         try {
             System.load(libFile.getAbsolutePath());
-            System.out.println("已加载已存在的库: " + libFile.getAbsolutePath());
+            log.debug("已加载已存在的库: {}", libFile.getAbsolutePath());
             return true;
         } catch (UnsatisfiedLinkError e) {
-            System.err.println("加载已存在的库失败: " + path);
-            System.err.println("错误: " + e.getMessage());
+            log.error("加载已存在的库失败: {}", path);
+            log.error("错误: {}", e.getMessage());
             return false;
         }
     }
@@ -131,7 +135,7 @@ public class NativeLibraryLoader {
 
         try (InputStream in = NativeLibraryLoader.class.getResourceAsStream("/lib/" + resourceName)) {
             if (in == null) {
-                System.err.println("找不到资源文件: /lib/" + resourceName);
+                log.error("找不到资源文件: /lib/{}", resourceName);
                 Launcher.exitApplication(-4);
                 return null;
             }
@@ -143,24 +147,24 @@ public class NativeLibraryLoader {
             Files.write(tempFile.toPath(), bytes);
             tempFile.deleteOnExit();
 
-            System.out.println("创建临时文件: " + tempFile.getAbsolutePath());
+            log.debug("创建临时文件: {}", tempFile.getAbsolutePath());
 
             try {
                 System.load(tempFile.getAbsolutePath());
-                System.out.println("已加载: " + tempFile.getAbsolutePath());
+                log.debug("已加载: {}", tempFile.getAbsolutePath());
                 return tempFile.getAbsolutePath();
             } catch (UnsatisfiedLinkError e) {
-                System.err.println("加载失败: " + fileName);
-                System.err.println("错误: " + e.getMessage());
+                log.error("加载失败: {}", fileName);
+                log.error("错误: {}", e.getMessage());
 
                 if (e.getMessage() != null && e.getMessage().contains("jportaudio")) {
-                    System.err.println("提示: 需要 portaudio" + suffix);
+                    log.error("提示: 需要 portaudio{}", suffix);
                 }
                 Launcher.exitApplication(-4);
                 return null;
             }
         } catch (IOException e) {
-            System.err.println("提取库文件失败: " + libName);
+            log.error("提取库文件失败: {}", libName);
             e.printStackTrace();
             Launcher.exitApplication(-4);
             return null;
@@ -191,7 +195,7 @@ public class NativeLibraryLoader {
         }
 
         Config.set("app.tempLib", paths);
-        System.out.println("已保存库路径: " + paths);
+        log.debug("已保存库路径: {}", paths);
     }
 
     private static boolean needsLoad(List<SystemInfo.Name> supportedSystems) {

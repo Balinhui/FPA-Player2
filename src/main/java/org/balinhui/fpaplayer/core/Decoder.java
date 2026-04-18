@@ -259,7 +259,7 @@ public class Decoder implements Runnable {
                 throw new RuntimeException("Cant allocate packet or frame");
             }
             BytePointer[] rawData = new BytePointer[1];
-            mainloop:while (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) &&
+            mainloop:while (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
                     CurrentStatus.stateIs(CurrentStatus.States.PAUSE)) {
                 if (av_read_frame(fmtCtx, packet) < 0)
                     break;
@@ -300,7 +300,7 @@ public class Decoder implements Runnable {
                 }
                 av_packet_unref(packet);
             }
-            log.trace("释放资源");
+            log.trace("释放解码资源");
             if (needsResample)
                 resample.free();
             avformat_close_input(fmtCtx);
@@ -319,7 +319,8 @@ public class Decoder implements Runnable {
                 buffer.clear();
                 log.info("强制退出，清空缓冲区");
             }
-            CurrentStatus.stateTo(CurrentStatus.States.STOP);
+            if (!CurrentStatus.stateIs(CurrentStatus.States.CLOSE))
+                CurrentStatus.stateTo(CurrentStatus.States.STOP);
             log.trace("当前解码结束");
         }
     }

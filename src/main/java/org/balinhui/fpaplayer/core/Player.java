@@ -28,7 +28,7 @@ public class Player implements Runnable {
     private int maxOutputChannels;
     private int maxOutputSampleRate;
     private BlockingStream stream;
-    private Event onFinishPerSong, onFinishPlay;
+    private Event onPerSongFinish, onPlayFinish;
     private final ExecutorService singleThread;//player的唯一线程，一切与portaudio有关的操作都将在这里进行
 
     public static boolean isWasapiSupported;
@@ -174,9 +174,9 @@ public class Player implements Runnable {
                 info.outputLatency, info.sampleRate);
     }
 
-    public void start(Event onFinishPerSong, Event onFinishPlay) {
-        this.onFinishPerSong = onFinishPerSong;
-        this.onFinishPlay = onFinishPlay;
+    public void start(Event onPerSongFinish, Event onPlayFinish) {
+        this.onPerSongFinish = onPerSongFinish;
+        this.onPlayFinish = onPlayFinish;
         singleThread.submit(this);
     }
 
@@ -216,8 +216,8 @@ public class Player implements Runnable {
             Buffer.Data data = buffer.takeData();
             if (data.end()) {
                 //解码器解码完成
-                if (onFinishPerSong != null)
-                    onFinishPerSong.handle(data.pos());
+                if (onPerSongFinish != null)
+                    onPerSongFinish.handle(data.pos());
             } else {
                 CurrentStatus.updateTime(data.oldSamplesNumber());
                 boolean result = false;
@@ -231,7 +231,7 @@ public class Player implements Runnable {
             }
         }
         stop();
-        onFinishPlay.handle(0);
+        onPlayFinish.handle(0);
     }
 
     public void stop() {

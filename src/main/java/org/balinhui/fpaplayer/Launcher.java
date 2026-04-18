@@ -1,6 +1,8 @@
 package org.balinhui.fpaplayer;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import org.balinhui.fpaplayer.info.SystemInfo;
 import org.balinhui.fpaplayer.util.Config;
 
 public class Launcher {
@@ -26,6 +28,7 @@ public class Launcher {
     public static void exitApplication(int exitCode) {
         //TODO 将要在此释放因为意外中断或是异常退出不能正常释放的资源
         Config.storeConfig();
+        Platform.exit();
         System.exit(exitCode);
     }
 

@@ -1,22 +1,21 @@
 package org.balinhui.fpaplayer.core;
 
-import org.balinhui.fpaplayer.info.SongInfo;
-
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CurrentStatus {
     private static final AtomicReference<States> state = new AtomicReference<>(States.STOP);
 
-    private static SongInfo currentSong;
+    private static double durationSeconds;
+
     private static int playedSamples;
     private static double currentTimeSeconds;
 
-    public static void stateTo(States newState) {
+    public static synchronized void stateTo(States newState) {
         state.set(newState);
         CurrentStatus.class.notifyAll();
     }
 
-    public static boolean stateIs(States check) {
+    public static synchronized boolean stateIs(States check) {
         return state.get() == check;
     }
 
@@ -29,22 +28,18 @@ public class CurrentStatus {
         return flag;
     }
 
-    public static void setCurrentSong(SongInfo info) {
-        currentSong = info;
-    }
-
-    public static SongInfo getCurrentSong() {
-        return currentSong;
+    public static void setDurationSeconds(double durationSeconds) {
+        CurrentStatus.durationSeconds = durationSeconds;
     }
 
     public static void updateTime(int samples) {
-        playedSamples += samples;
-        currentTimeSeconds = (double) playedSamples / currentSong.durationSeconds;
+        CurrentStatus.playedSamples += samples;
+        CurrentStatus.currentTimeSeconds = (double) playedSamples / durationSeconds;
     }
 
     public static void resetTime() {
-        playedSamples = 0;
-        currentTimeSeconds = 0.0;
+        CurrentStatus.playedSamples = 0;
+        CurrentStatus.currentTimeSeconds = 0.0;
     }
 
     public static double getCurrentTimeSeconds() {
