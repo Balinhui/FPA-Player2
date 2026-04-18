@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import org.balinhui.fpaplayer.info.SystemInfo;
 import org.balinhui.fpaplayer.ui.LyricsPane;
 import org.balinhui.fpaplayer.ui.PButton;
 import org.balinhui.fpaplayer.util.Config;
@@ -383,13 +384,13 @@ public class FPAScreen extends Application {
         FPAScreen.OperableControls.mainWindow.setFullScreen(fullScreenValue);
         if (fullScreenValue) {
             fullScreen.setImages(
-                    Resources.ImageRes.full_screen_black,
-                    Resources.ImageRes.full_screen_white
+                    Resources.ImageRes.cancel_full_screen_black,
+                    Resources.ImageRes.cancel_full_screen_white
             );
         } else {
             fullScreen.setImages(
-                    Resources.ImageRes.cancel_full_screen_black,
-                    Resources.ImageRes.cancel_full_screen_white
+                    Resources.ImageRes.full_screen_black,
+                    Resources.ImageRes.full_screen_white
             );
         }
     }
