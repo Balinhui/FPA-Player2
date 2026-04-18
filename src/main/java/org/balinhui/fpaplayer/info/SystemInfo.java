@@ -1,4 +1,4 @@
-package org.balinhui.fpaplayer;
+package org.balinhui.fpaplayer.info;
 
 import java.util.Locale;
 

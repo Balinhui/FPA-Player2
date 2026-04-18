@@ -29,7 +29,9 @@ public class Config {
             Map.entry("lyric.position", new ConfigPreference(ConfigType.STR, new ConfigValue("center"))),
             Map.entry("lyric.translate", new ConfigPreference(ConfigType.BOOL, new ConfigValue("true"))),
             Map.entry("lyric.binding", new ConfigPreference(ConfigType.BOOL, new ConfigValue("true"))),
-            Map.entry("lyric.fontSize", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("20")))
+            Map.entry("lyric.fontSize", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("20"))),
+            Map.entry("audio.openWasapi", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
+            Map.entry("audio.frameNum", new ConfigPreference(ConfigType.DOUBLE, new ConfigValue("0")))
     );
 
     private Config() {}

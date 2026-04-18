@@ -48,7 +48,7 @@ public class Buffer {
             }
         }
 
-        Data data = new Data(samplesNumber, oldSamplesNumber, pos, DataType.FLOAT);
+        Data data = new Data(samplesNumber, oldSamplesNumber, pos, DataType.FLOAT, false);
         try {
             queue.put(data);
         } catch (InterruptedException e) {
@@ -82,7 +82,7 @@ public class Buffer {
             }
         }
 
-        Data data = new Data(samplesNumber, oldSamplesNumber, pos, DataType.SHORT);
+        Data data = new Data(samplesNumber, oldSamplesNumber, pos, DataType.SHORT, false);
         try {
             queue.put(data);
         } catch (InterruptedException e) {
@@ -97,6 +97,15 @@ public class Buffer {
         }
     }
 
+    public void putEndInfo(int count) {
+        Data data = new Data(0, 0, count, null, true);
+        try {
+            queue.put(data);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Data takeData() {
         try {
             return queue.take();
@@ -106,8 +115,12 @@ public class Buffer {
         }
     }
 
-    int getQueueSize() {
+    public int getQueueSize() {
         return queue.size();
+    }
+
+    public boolean isEmpty() {
+        return queue.isEmpty();
     }
 
     public void clear() {
@@ -116,8 +129,9 @@ public class Buffer {
         putShortPos.set(0);
     }
 
-    public record Data(int samplesNumber, int oldSamplesNumber, int pos, DataType currentDataType) {
+    public record Data(int samplesNumber, int oldSamplesNumber, int pos, DataType currentDataType, boolean end) {
         public float[] getFloatArray() {
+            if (end) return null;
             if (currentDataType != DataType.FLOAT) {
                 throw new IllegalStateException(
                         String.format("需求类型与当前类型不符: 需要 FLOAT, 实际 %s", currentDataType)
@@ -127,6 +141,7 @@ public class Buffer {
         }
 
         public short[] getShortArray() {
+            if (end) return null;
             if (currentDataType != DataType.SHORT) {
                 throw new IllegalStateException(
                         String.format("需求类型与当前类型不符: 需要 SHORT, 实际 %s", currentDataType)
