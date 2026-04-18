@@ -311,24 +311,27 @@ public class Decoder implements Runnable {
             av_frame_free(frame);
             av_packet_free(packet);
             fmtCtx.deallocate();
-            if (onDecodeFinish != null &&
-                (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
-                 CurrentStatus.stateIs(CurrentStatus.States.NEXT))) {
-                buffer.putEndInfo(i + 1);
-                onDecodeFinish.handle(i + 1);//对下一首歌预读
-                if (CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
-                    CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
+            if (onDecodeFinish != null) {
+                if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
+                 CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
+                    onDecodeFinish.handle(i + 1);//对下一首歌预读
+                    if (CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
+                        CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
+                        buffer.clear();
+                    }
+                    buffer.putEndInfo(i + 1);
+                } else if (CurrentStatus.stateIs(CurrentStatus.States.CLOSE)) {
                     buffer.clear();
+                    break;
                 }
             } else if (CurrentStatus.stateIs(CurrentStatus.States.CLOSE)) {
                 buffer.clear();
-                log.info("强制退出，清空缓冲区");
             } else if (CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
                 buffer.clear();
             }
-            if (!CurrentStatus.stateIs(CurrentStatus.States.CLOSE))
-                CurrentStatus.stateTo(CurrentStatus.States.STOP);
-            log.trace("当前解码结束");
         }
+        if (!CurrentStatus.stateIs(CurrentStatus.States.CLOSE))
+            CurrentStatus.stateTo(CurrentStatus.States.STOP);
+        log.trace("当前解码结束");
     }
 }

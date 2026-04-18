@@ -29,6 +29,7 @@ public class FPAControl {
     private Player player;
     private UIPlayer uiPlayer;
 
+    private SongInfo song;
 
 
     private FPAControl() {}
@@ -132,14 +133,37 @@ public class FPAControl {
     }
 
     private void processOneFile(String path) {
-        SongInfo song = decoder.read(path);
+        song = decoder.read(path);
         if (song == null) return;
         OutputInfo output = player.read(song);
         playSong(song, output, null, null);
     }
 
     private void processFiles(String[] paths) {
-        //TODO 完成多首播放
+        song = decoder.read(paths);
+        if (song == null) return;
+        OutputInfo output = player.getTheSameOutput();
+        playSong(song, output, index -> {
+            if (index < paths.length)
+                song = decoder.onlyRead(paths[index]);
+        }, index -> {
+            if (index < paths.length) {
+                uiPlayer.stop();
+                CurrentStatus.resetTime(song.durationSeconds, song.totalSamples);
+                Platform.runLater(() -> {
+                    FPAScreen.OperableControls.lyricsPane.release();
+                    FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
+                    FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
+
+                });
+                uiPlayer = new UIPlayer(
+                        song.durationSeconds * 1000,
+                        FPAScreen.OperableControls.lyricsPane,
+                        FPAScreen.OperableControls.progressBar
+                );
+                uiPlayer.play();
+            }
+        });
     }
 
     private void playSong(SongInfo song, OutputInfo output, Event onDecodeFinish,
@@ -168,8 +192,8 @@ public class FPAControl {
                 FPAScreen.OperableControls.cover.setImage(Resources.ImageRes.cover);
                 FPAScreen.OperableControls.progressBar.setProgress(-1);
                 FPAScreen.setPauseButton(false);
+                FPAScreen.OperableControls.lyricsPane.release();
             });
-            FPAScreen.OperableControls.lyricsPane.release();
         };
     }
 }

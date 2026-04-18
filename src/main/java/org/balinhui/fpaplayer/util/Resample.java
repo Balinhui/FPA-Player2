@@ -92,7 +92,6 @@ public class Resample {
     public void free() {
         if (!dstData.isNull())
             av_freep(dstData.position(0));
-        av_freep(dstData);
         linSize.deallocate();
         swr_free(swrCtx);
         dstSamples = -1;

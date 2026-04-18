@@ -121,8 +121,10 @@ public class LyricsPane extends ScrollPane {
 
         scrollTimeLine.play();
         scrollTimeLine.setOnFinished(event -> {
-            realLyrics.forEach(lyricLine -> lyricLine.setHighlight(false));
-            realLyrics.get(lineIndex).setHighlight(true);
+            if (!realLyrics.isEmpty()) {
+                realLyrics.forEach(lyricLine -> lyricLine.setHighlight(false));
+                realLyrics.get(lineIndex).setHighlight(true);
+            }
         });
     }
 
