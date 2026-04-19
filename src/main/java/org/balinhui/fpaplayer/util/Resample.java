@@ -59,6 +59,8 @@ public class Resample {
             logger.fatal("SwrContext初始化失败");
             throw new RuntimeException("SwrContext初始化失败");
         }
+        av_channel_layout_uninit(srcLayout);
+        av_channel_layout_uninit(dstLayout);
     }
 
     public int process(BytePointer[] rawData, int samples, PointerPointer<?> srcData) {
@@ -84,15 +86,18 @@ public class Resample {
         }
         int newSamples = swr_convert(swrCtx, dstData, dstSamples, srcData, samples);
         int bufferSize = av_samples_get_buffer_size(linSize, dstChannels, newSamples, dstSampleFormat, 1);
-        Pointer p = dstData.get(0).position(0).limit(bufferSize);
-        rawData[0] = new BytePointer(p);
+        rawData[0] = dstData.get(BytePointer.class, 0);
+        rawData[0].position(0).limit(bufferSize);
         return newSamples;
     }
 
     public void free() {
-        if (!dstData.isNull())
+        if (!dstData.isNull()) {
             av_freep(dstData.position(0));
+            av_freep(dstData);
+        }
         linSize.deallocate();
+        dstData.deallocate();
         swr_free(swrCtx);
         dstSamples = -1;
         maxDstSamples = -1;

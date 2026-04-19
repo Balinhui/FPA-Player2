@@ -43,7 +43,7 @@ public class Buffer {
 
         synchronized (floatData) {
             float[] array = floatData.get(pos);
-            if (array.length < size) {
+            if (array.length <= size) {
                 floatData.set(pos, new float[size]);
             }
         }
@@ -77,7 +77,7 @@ public class Buffer {
 
         synchronized (shortData) {
             short[] array = shortData.get(pos);
-            if (array.length < size) {
+            if (array.length <= size) {
                 shortData.set(pos, new short[size]);
             }
         }

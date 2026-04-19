@@ -310,7 +310,6 @@ public class Decoder implements Runnable {
             avcodec_free_context(codecCtx);
             av_frame_free(frame);
             av_packet_free(packet);
-            fmtCtx.deallocate();
             if (onDecodeFinish != null) {
                 if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
                  CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
