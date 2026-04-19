@@ -102,10 +102,12 @@ public class FPAScreen extends Application {
                         isRightPaneVisible = false;
                         hideRightPane(rightPane);
                         bindCover(OperableControls.cover, leftPane, 0.8, false);
+                        OperableControls.cover.setOnMousePressed(mouseEvent -> control.onChooseFile());
                     } else if (newValue.doubleValue() >= 500 && !isRightPaneVisible) {
                         isRightPaneVisible = true;
                         bindCover(OperableControls.cover, leftPane, 0.6, false);
                         showRightPane(leftPane, rightPane, mainPane);
+                        OperableControls.cover.setOnMousePressed(null);
                     }
                 }));
         stage.setMinHeight(370);
