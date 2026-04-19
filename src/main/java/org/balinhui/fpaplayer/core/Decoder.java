@@ -86,7 +86,6 @@ public class Decoder implements Runnable {
                 log.error("找不到流信息");
                 throw new RuntimeException("Cant find stream info");
             }
-            log.trace("寻找流信息");
             AVStream stream = null;
             for (int i = 0; i < fmtCtx.nb_streams(); i++) {
                 if (fmtCtx.streams(i).codecpar().codec_type() == AVMEDIA_TYPE_VIDEO &&
@@ -108,7 +107,6 @@ public class Decoder implements Runnable {
                 );
                 return null;
             }
-            log.trace("找到解码器参数");
             byte[] coverData = null;
             if (coverStream == -1) {
                 try {
@@ -126,7 +124,6 @@ public class Decoder implements Runnable {
                     coverData = new byte[coverPkt.size()];
                     coverPkt.data().get(coverData);
                 }
-                log.trace("获取封面");
             }
             double totalDurationSeconds = fmtCtx.duration() / (double) AV_TIME_BASE;
             return new SongInfo(
@@ -173,7 +170,6 @@ public class Decoder implements Runnable {
                     entry.key().getString(Charset.defaultCharset()),
                     entry.value().getString(Charset.defaultCharset())
             );
-            log.trace("找到歌词信息");
         }
         return metadata;
     }
