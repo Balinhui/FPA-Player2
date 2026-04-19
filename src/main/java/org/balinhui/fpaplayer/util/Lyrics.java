@@ -16,7 +16,7 @@ public class Lyrics {
     private Lyrics() {}
 
     public static TreeMap<Long, List<String>> parse(Map<String, String> metadata) {
-        String lyrics = "[00:00.00]纯音乐，请欣赏";
+        String lyrics = "[00:02.00]纯音乐，请欣赏";
         for (String s : metadata.keySet()) {
             Matcher matcher = lyricsPattern.matcher(s);
             if (matcher.find()) {
