@@ -154,7 +154,7 @@ public class FPAControl {
                     FPAScreen.OperableControls.lyricsPane.release();
                     FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
                     FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
-
+                    FPAScreen.setPauseButton(true);
                 });
                 uiPlayer = new UIPlayer(
                         song.durationSeconds * 1000,
@@ -176,8 +176,8 @@ public class FPAControl {
         FPAScreen.setPauseButton(true);
         uiPlayer = new UIPlayer(song.durationSeconds * 1000,
                 FPAScreen.OperableControls.lyricsPane,
-                FPAScreen.OperableControls.progressBar);
-
+                FPAScreen.OperableControls.progressBar
+        );
 
         uiPlayer.play();
         player.start(onPerSongFinish);
@@ -185,8 +185,7 @@ public class FPAControl {
 
     private Event createOnPlayFinishHandler() {
         return v -> {
-            if (uiPlayer != null)
-                uiPlayer.stop();
+            uiPlayer.stop();
             Platform.runLater(() -> {
                 FPAScreen.setDisplayLyrics(false);
                 FPAScreen.OperableControls.cover.setImage(Resources.ImageRes.cover);
