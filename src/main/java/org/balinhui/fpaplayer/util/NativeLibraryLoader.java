@@ -120,10 +120,10 @@ public class NativeLibraryLoader {
 
         try {
             System.load(libFile.getAbsolutePath());
-            log.debug("已加载已存在的库: {}", libFile.getAbsolutePath());
+            log.debug("已加载已存在的库: {}", sweepUserPath(libFile.getAbsolutePath()));
             return true;
         } catch (UnsatisfiedLinkError e) {
-            log.error("加载已存在的库失败: {}", path);
+            log.error("加载已存在的库失败: {}", sweepUserPath(path));
             log.error("错误: {}", e.getMessage());
             return false;
         }
@@ -147,11 +147,11 @@ public class NativeLibraryLoader {
             Files.write(tempFile.toPath(), bytes);
             tempFile.deleteOnExit();
 
-            log.debug("创建临时文件: {}", tempFile.getAbsolutePath());
+            log.debug("创建临时文件: {}", sweepUserPath(tempFile.getAbsolutePath()));
 
             try {
                 System.load(tempFile.getAbsolutePath());
-                log.debug("已加载: {}", tempFile.getAbsolutePath());
+                log.debug("已加载: {}", sweepUserPath(tempFile.getAbsolutePath()));
                 return tempFile.getAbsolutePath();
             } catch (UnsatisfiedLinkError e) {
                 log.error("加载失败: {}", fileName);
@@ -185,17 +185,7 @@ public class NativeLibraryLoader {
     private static void saveLoadedPaths(List<String> loadedPaths) {
         String paths = String.join(File.pathSeparator, loadedPaths);
 
-        // 合并已存在的路径
-        String existing = Config.get("app.tempLib").value().sValue;
-        if (existing != null && !existing.equals("null") && !existing.isEmpty()) {
-            Set<String> allPaths = new LinkedHashSet<>();
-            allPaths.addAll(Arrays.asList(existing.split(File.pathSeparator)));
-            allPaths.addAll(loadedPaths);
-            paths = String.join(File.pathSeparator, allPaths);
-        }
-
         Config.set("app.tempLib", paths);
-        log.debug("已保存库路径: {}", paths);
     }
 
     private static boolean needsLoad(List<SystemInfo.Name> supportedSystems) {
@@ -205,6 +195,20 @@ public class NativeLibraryLoader {
             }
         }
         return false;
+    }
+
+    private static String sweepUserPath(String absolutePath) {
+        String[] tmp;
+        if (SystemInfo.systemName == SystemInfo.Name.WINDOWS) {
+            tmp = absolutePath.split("\\\\");
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < tmp.length; i++) {
+                if (i > 3) sb.append("\\");
+                if (i > 2) sb.append(tmp[i]);
+            }
+            return sb.toString();
+        }
+        return absolutePath;
     }
 
 
