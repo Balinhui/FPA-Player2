@@ -65,7 +65,7 @@ public class LyricLine extends VBox {
             //通过配置文件设置是否绑定布局容器
             if (Config.get("lyric.binding").value().bValue) {
                 if (i == 0) l.fontProperty().bind(Bindings.createObjectBinding(() ->
-                        Font.font(null, FontWeight.NORMAL, Math.min(MAX_FONT_SIZE, getWidth() * RATE)),
+                        Font.font(null, FontWeight.MEDIUM, Math.min(MAX_FONT_SIZE, getWidth() * RATE)),
                         widthProperty()));
                 else l.fontProperty().bind(Bindings.createObjectBinding(() ->
                         Font.font(null, FontWeight.LIGHT, Math.min(MAX_FONT_SIZE - 5, getWidth() * RATE - 5)),
@@ -74,7 +74,7 @@ public class LyricLine extends VBox {
                 double size = Config.get("lyric.fontSize").value().dValue;
                 size = Math.min(size, MAX_FONT_SIZE);
 
-                if (i == 0) l.setFont(Font.font(null, FontWeight.NORMAL, size));
+                if (i == 0) l.setFont(Font.font(null, FontWeight.MEDIUM, size));
                 else l.setFont(Font.font(null, FontWeight.LIGHT, size - 5));
             }
             getChildren().add(l);
@@ -149,7 +149,7 @@ public class LyricLine extends VBox {
                 labels.get(i).setFont(null);
 
                 if (i == 0) labels.get(i).fontProperty().bind(Bindings.createObjectBinding(() ->
-                        Font.font(null, FontWeight.NORMAL, Math.min(MAX_FONT_SIZE, getWidth() * RATE)),
+                        Font.font(null, FontWeight.MEDIUM, Math.min(MAX_FONT_SIZE, getWidth() * RATE)),
                         widthProperty()));
                 else labels.get(i).fontProperty().bind(Bindings.createObjectBinding(() ->
                         Font.font(null, FontWeight.LIGHT, Math.min(MAX_FONT_SIZE - 5, getWidth() * RATE - 5)),
@@ -159,7 +159,7 @@ public class LyricLine extends VBox {
                 double size = Config.get("lyric.fontSize").value().dValue;
                 size = Math.min(size, MAX_FONT_SIZE);
 
-                if (i == 0) labels.get(i).setFont(Font.font(null, FontWeight.NORMAL, size));
+                if (i == 0) labels.get(i).setFont(Font.font(null, FontWeight.MEDIUM, size));
                 else labels.get(i).setFont(Font.font(null, FontWeight.LIGHT, size - 5));
             }
         }
@@ -170,7 +170,7 @@ public class LyricLine extends VBox {
         for (int i = 0; i < labels.size(); i++) {
             size = Math.min(size, MAX_FONT_SIZE);
 
-            if (i == 0) labels.get(i).setFont(Font.font(null, FontWeight.NORMAL, size));
+            if (i == 0) labels.get(i).setFont(Font.font(null, FontWeight.MEDIUM, size));
             else labels.get(i).setFont(Font.font(null, FontWeight.LIGHT, size - 5));
         }
     }
