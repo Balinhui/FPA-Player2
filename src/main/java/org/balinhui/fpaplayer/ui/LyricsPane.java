@@ -62,6 +62,8 @@ public class LyricsPane extends ScrollPane {
             this.lyricsContainer.getChildren().add(lyricLine);
         }
         addPlaceholderComponents();
+        if (realLyrics.size() == 1)
+            realLyrics.getFirst().setHighlight(true);
     }
 
     private void addPlaceholderComponents() {
@@ -106,12 +108,11 @@ public class LyricsPane extends ScrollPane {
         double targetScrollTop = nodeTop - (viewportHeight - nodeHeight) / 2;
 
         double maxScroll = containerHeight - viewportHeight;
-        if (maxScroll < 0) maxScroll = 0;
+        if (maxScroll <= 0) return;
+
         targetScrollTop = Math.clamp(targetScrollTop, 0, maxScroll);
 
         double targetVValue = targetScrollTop / maxScroll;
-
-        if (maxScroll <= 0) return;
 
         scrollTimeLine = new Timeline(
                 new KeyFrame(Duration.ZERO,
