@@ -205,7 +205,7 @@ public class Player implements Runnable {
                 (!CurrentStatus.stateIs(CurrentStatus.States.STOP) && !CurrentStatus.stateIs(CurrentStatus.States.CLOSE))) {
             boolean paused;//用于判断是否暂停了的标识，如果是从暂停中启动，则为true。防止提前退出
             try {
-                paused = CurrentStatus.waitUntilNotPaused();
+                paused = CurrentStatus.waitUntilNotPaused(this);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -214,6 +214,7 @@ public class Player implements Runnable {
                     buffer.clear();
                     break;
                 }
+                stream.start();
             }
 
             Buffer.Data data = buffer.takeData();
@@ -237,9 +238,14 @@ public class Player implements Runnable {
         onPlayFinish.handle(0);
     }
 
+    public void stopStream() {
+        stream.stop();
+    }
+
     public void stop() {
         //先将流中数据完后暂停，然后停止
-        stream.stop();
+        if (!stream.isStopped())
+            stream.stop();
         stream.close();
         log.trace("流关闭");
     }

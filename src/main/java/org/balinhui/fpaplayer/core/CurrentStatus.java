@@ -21,10 +21,11 @@ public class CurrentStatus {
         return state.get() == check;
     }
 
-    public static synchronized boolean waitUntilNotPaused() throws InterruptedException {
+    public static synchronized boolean waitUntilNotPaused(Player player) throws InterruptedException {
         boolean flag = false;
         while (stateIs(States.PAUSE)) {
             flag = true;
+            player.stopStream();
             CurrentStatus.class.wait();
         }
         return flag;
