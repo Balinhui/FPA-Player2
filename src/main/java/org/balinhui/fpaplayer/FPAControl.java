@@ -114,7 +114,7 @@ public class FPAControl {
     }
 
     public void onNext() {
-        if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING))
+        if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) || CurrentStatus.stateIs(CurrentStatus.States.PAUSE))
             CurrentStatus.stateTo(CurrentStatus.States.NEXT);
     }
 

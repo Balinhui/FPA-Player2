@@ -240,8 +240,8 @@ public class Player implements Runnable {
     public void stop() {
         //先将流中数据完后暂停，然后停止
         stream.stop();
-
         stream.close();
+        log.trace("流关闭");
     }
 
     public void terminate() {

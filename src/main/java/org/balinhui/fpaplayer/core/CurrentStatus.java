@@ -11,8 +11,10 @@ public class CurrentStatus {
     private static double currentTimeMillis;
 
     public static synchronized void stateTo(States newState) {
+        States tmp = state.get();
         state.set(newState);
-        CurrentStatus.class.notifyAll();
+        if (tmp == States.PAUSE)
+            CurrentStatus.class.notify();
     }
 
     public static synchronized boolean stateIs(States check) {
