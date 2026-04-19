@@ -43,15 +43,15 @@ public class Player implements Runnable {
 
         singleThread.submit(() -> {
             initialize();
+
+            isWasapiSupported = hostApiTypeIdToHostApiIndex(HOST_API_TYPE_WASAPI) > 0;
+            log.info("对 wasapi 的支持情况: {}", isWasapiSupported ? "支持" : "不支持");
             deviceId = getDefaultOutputDevice();
-            if (Config.get("audio.openWasapi").value().bValue)
+            if (isWasapiSupported && Config.get("audio.openWasapi").value().bValue)
                 deviceId = getHostApiInfo(hostApiTypeIdToHostApiIndex(HOST_API_TYPE_WASAPI)).defaultOutputDevice;
             DeviceInfo deviceInfo = getDeviceInfo(deviceId);
             log.info("默认输出设备为: {}", deviceInfo.name);
             getDeviceChannelsAndSampleRateInfo(deviceId, deviceInfo);
-
-
-            isWasapiSupported = hostApiTypeIdToHostApiIndex(HOST_API_TYPE_WASAPI) > 0;
         });
     }
 
@@ -79,7 +79,7 @@ public class Player implements Runnable {
 
     private void refreshDevice() {
         int id = getDefaultOutputDevice();
-        if (Config.get("audio.openWasapi").value().bValue)
+        if (isWasapiSupported && Config.get("audio.openWasapi").value().bValue)
             id = getHostApiInfo(hostApiTypeIdToHostApiIndex(HOST_API_TYPE_WASAPI)).defaultOutputDevice;
         if (id != deviceId) {
             log.info("检测到输出设备更改，由id: {} -> id: {}", deviceId, id);
@@ -118,7 +118,7 @@ public class Player implements Runnable {
             resample = true;
         }
 
-        if (Config.get("audio.openWasapi").value().bValue) {
+        if (isWasapiSupported && Config.get("audio.openWasapi").value().bValue) {
             int defaultSampleRate = (int) getDeviceInfo(deviceId).defaultSampleRate;
             if (sampleRate != defaultSampleRate) {
                 log.info("使用WASAPI，歌曲采样率必须为 {} HZ", defaultSampleRate);
@@ -136,7 +136,7 @@ public class Player implements Runnable {
 
         int channels = 2;
         int sampleRate = 48000;
-        if (Config.get("audio.openWasapi").value().bValue) {
+        if (isWasapiSupported && Config.get("audio.openWasapi").value().bValue) {
             int onlySampleRate = (int) getDeviceInfo(deviceId).defaultSampleRate;
             log.info("使用WASAPI，所有歌曲的采样率统一为: {}", onlySampleRate);
             sampleRate = onlySampleRate;
