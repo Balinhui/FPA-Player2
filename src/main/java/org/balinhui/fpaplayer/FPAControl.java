@@ -114,7 +114,8 @@ public class FPAControl {
     }
 
     public void onNext() {
-        CurrentStatus.stateTo(CurrentStatus.States.NEXT);
+        if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING))
+            CurrentStatus.stateTo(CurrentStatus.States.NEXT);
     }
 
     public void onOpenSettingWindow() {
@@ -136,6 +137,7 @@ public class FPAControl {
         song = decoder.read(path);
         if (song == null) return;
         OutputInfo output = player.read(song);
+        log.trace("OutputInfo: {}", output);
         playSong(song, output, null, null);
     }
 
@@ -153,7 +155,8 @@ public class FPAControl {
                 Platform.runLater(() -> {
                     FPAScreen.OperableControls.lyricsPane.release();
                     FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
-                    FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
+                    if (song.cover != null)
+                        FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
                     FPAScreen.setPauseButton(true);
                 });
                 uiPlayer = new UIPlayer(
@@ -172,7 +175,8 @@ public class FPAControl {
         decoder.start(output, onDecodeFinish);
         FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
         FPAScreen.setDisplayLyrics(true);
-        FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
+        if (song.cover != null)
+            FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
         FPAScreen.setPauseButton(true);
         uiPlayer = new UIPlayer(song.durationSeconds * 1000,
                 FPAScreen.OperableControls.lyricsPane,
