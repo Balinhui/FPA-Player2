@@ -60,8 +60,8 @@ package com.portaudio;
  * @see BlockingStream
  * @see DeviceInfo
  * @see HostApiInfo
- * @see portaudio.StreamInfo
- * @see portaudio.StreamParameters
+ * @see StreamInfo
+ * @see StreamParameters
  * 
  * @author Phil Burk
  * 

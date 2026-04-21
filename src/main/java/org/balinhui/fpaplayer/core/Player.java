@@ -41,6 +41,8 @@ public class Player implements Runnable {
         ThreadFactory factory = r -> new Thread(r, "Play Thread");
         singleThread = Executors.newSingleThreadExecutor(factory);
 
+        log.info("当前PortAudio版本: {}, {}", getVersion(), getVersionText());
+
         singleThread.submit(() -> {
             initialize();
 
@@ -234,15 +236,15 @@ public class Player implements Runnable {
                 }
             }
         }
-        stop();
+        closeStream();
         onPlayFinish.handle(0);
     }
 
-    public void stopStream() {
-        stream.stop();
+    public void abortStream() {
+        stream.abort();
     }
 
-    public void stop() {
+    public void closeStream() {
         //先将流中数据完后暂停，然后停止
         if (!stream.isStopped())
             stream.stop();
@@ -251,11 +253,7 @@ public class Player implements Runnable {
     }
 
     public void terminate() {
-        singleThread.submit(() -> {
-            if (!stream.isStopped()) stop();
-
-            PortAudio.terminate();
-        });
+        singleThread.submit(PortAudio::terminate);
 
         singleThread.shutdown();
         try {

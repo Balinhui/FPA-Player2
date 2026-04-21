@@ -30,9 +30,9 @@ public class AudioUtil {
      */
     public static int getPortAudioSampleFormat(int sampleFormat) {
         return switch (sampleFormat) {
-            case AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P -> FORMAT_UINT_8;
+            case AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P -> FORMAT_UINT_8;//不支持
             case AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P -> FORMAT_INT_16;
-            case AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P -> FORMAT_INT_32;
+            case AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P -> FORMAT_INT_32;//不支持
             case AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP -> FORMAT_FLOAT_32;
             default -> -1;
         };

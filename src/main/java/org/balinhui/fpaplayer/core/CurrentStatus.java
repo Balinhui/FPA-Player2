@@ -25,7 +25,7 @@ public class CurrentStatus {
         boolean flag = false;
         while (stateIs(States.PAUSE)) {
             flag = true;
-            player.stopStream();
+            player.abortStream();
             CurrentStatus.class.wait();
         }
         return flag;
