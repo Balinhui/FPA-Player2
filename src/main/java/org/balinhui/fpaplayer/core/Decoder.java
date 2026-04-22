@@ -2,11 +2,10 @@ package org.balinhui.fpaplayer.core;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.balinhui.fpaplayer.FPAControl;
 import org.balinhui.fpaplayer.info.OutputInfo;
 import org.balinhui.fpaplayer.info.SongInfo;
-import org.balinhui.fpaplayer.nativeapis.Global;
 import org.balinhui.fpaplayer.nativeapis.MessageFlags;
+import org.balinhui.fpaplayer.nativeapis.NativeAPI;
 import org.balinhui.fpaplayer.util.AudioUtil;
 import org.balinhui.fpaplayer.util.FlacCoverExtractor;
 import org.balinhui.fpaplayer.util.Resample;
@@ -73,8 +72,7 @@ public class Decoder implements Runnable {
         try {
             if (avformat_open_input(fmtCtx, path, null, null) < 0) {
                 log.error("打开文件失败，是不是在macOS上选择了一个文件夹？");
-                Global.messageOf(
-                        FPAControl.hWnd,
+                NativeAPI.displayMessage(
                         "无法打开文件!",
                         "文件可能已经损坏，或者是在macOS上选择了一个文件夹",
                         MessageFlags.Buttons.OK | MessageFlags.Icons.ERROR
@@ -99,8 +97,7 @@ public class Decoder implements Runnable {
             if (codecPar == null) {
                 log.error("没有找到解码器参数，文件格式可能不符");
                 //throw new RuntimeException("Doesn't find codec parameter");
-                Global.messageOf(
-                        FPAControl.hWnd,
+                NativeAPI.displayMessage(
                         "错误的文件类型!",
                         "请选择音频文件!!!",
                         MessageFlags.Buttons.OK | MessageFlags.Icons.ERROR

@@ -11,8 +11,8 @@ import org.balinhui.fpaplayer.core.Player;
 import org.balinhui.fpaplayer.info.OutputInfo;
 import org.balinhui.fpaplayer.info.SongInfo;
 import org.balinhui.fpaplayer.info.SystemInfo;
-import org.balinhui.fpaplayer.nativeapis.Global;
 import org.balinhui.fpaplayer.nativeapis.MessageFlags;
+import org.balinhui.fpaplayer.nativeapis.NativeAPI;
 import org.balinhui.fpaplayer.ui.UIPlayer;
 import org.balinhui.fpaplayer.util.Config;
 import org.balinhui.fpaplayer.util.Lyrics;
@@ -22,7 +22,6 @@ import java.io.ByteArrayInputStream;
 
 public class FPAControl {
     private static final Logger log = LogManager.getLogger(FPAControl.class);
-    public static long hWnd;
     private static final FPAControl control = new FPAControl();
 
     private Decoder decoder;
@@ -48,13 +47,11 @@ public class FPAControl {
     }
 
     public void onWindowShow() {
-        try {
-            hWnd = Global.getHwnd(FPAScreen.OperableControls.mainWindow.getTitle());
-        } catch (UnsatisfiedLinkError e) {
+        boolean succeed = NativeAPI.getHWND(FPAScreen.OperableControls.mainWindow.getTitle());
+        if (!succeed) {
             if (SystemInfo.systemName == SystemInfo.Name.WINDOWS)
                 log.error("global库未能正常加载，本机代码无法调用");
-            else log.info("非Windows操作系统，hWnd设置为-1");
-            hWnd = -1;
+            else log.debug("非Windows操作系统，hWnd设置为-1");
         }
     }
 
@@ -86,10 +83,9 @@ public class FPAControl {
             return;
         String[] paths;
         try {
-            paths = Global.chooseFiles(hWnd, Resources.SuffixNameRes.suffix_names);
+            paths = NativeAPI.getChoseFiles(Resources.SuffixNameRes.suffix_names);
         } catch (UnsatisfiedLinkError e) {
-            Global.messageOf(
-                    hWnd,
+            NativeAPI.displayMessage(
                     "未链接库",
                     "没有链接到file_chooser",
                     MessageFlags.Buttons.OK | MessageFlags.Icons.ERROR

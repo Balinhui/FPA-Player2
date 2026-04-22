@@ -3,11 +3,10 @@ package org.balinhui.fpaplayer.core;
 import com.portaudio.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.balinhui.fpaplayer.FPAControl;
 import org.balinhui.fpaplayer.info.OutputInfo;
 import org.balinhui.fpaplayer.info.SongInfo;
-import org.balinhui.fpaplayer.nativeapis.Global;
 import org.balinhui.fpaplayer.nativeapis.MessageFlags;
+import org.balinhui.fpaplayer.nativeapis.NativeAPI;
 import org.balinhui.fpaplayer.util.AudioUtil;
 import org.balinhui.fpaplayer.util.Config;
 
@@ -193,8 +192,7 @@ public class Player implements Runnable {
         int ret;
         if ((ret = stream.getWriteAvailable()) < 0) {
             log.fatal("当前流无法写入: {}", ret);
-            ret = Global.messageOf(
-                    FPAControl.hWnd,
+            ret = NativeAPI.displayMessage(
                     "出错",
                     "歌曲的流无法写入设备: " + ret + "，可能是设备问题或请重试",
                     MessageFlags.Buttons.RETRY_CANCEL | MessageFlags.Icons.WARNING
