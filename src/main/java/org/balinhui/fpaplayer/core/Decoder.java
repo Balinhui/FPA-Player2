@@ -120,6 +120,7 @@ public class Decoder implements Runnable {
                 if (coverPkt != null && coverPkt.data() != null && coverPkt.size() > 0) {
                     coverData = new byte[coverPkt.size()];
                     coverPkt.data().get(coverData);
+                    av_packet_free(coverPkt);
                 }
             }
             double totalDurationSeconds = fmtCtx.duration() / (double) AV_TIME_BASE;
@@ -254,7 +255,8 @@ public class Decoder implements Runnable {
                 throw new RuntimeException("Cant allocate packet or frame");
             }
             BytePointer[] rawData = new BytePointer[1];
-            mainloop:while (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
+            mainloop:
+            while (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
                     CurrentStatus.stateIs(CurrentStatus.States.PAUSE)) {
                 if (av_read_frame(fmtCtx, packet) < 0)
                     break;

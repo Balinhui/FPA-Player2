@@ -235,6 +235,7 @@ public class Player implements Runnable {
             }
         }
         closeStream();
+        buffer.clearArray();
         onPlayFinish.handle(0);
     }
 
