@@ -23,6 +23,8 @@ public class Launcher {
      * -3 权限不足
      * <p>
      * -4 重要文件未找到
+     * <p>
+     * -5 具有堆栈信息的未知错误
      * @param exitCode 有如上值
      */
     public static void exitApplication(int exitCode) {

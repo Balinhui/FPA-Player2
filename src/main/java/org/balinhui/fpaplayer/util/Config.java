@@ -2,7 +2,6 @@ package org.balinhui.fpaplayer.util;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.balinhui.fpaplayer.Launcher;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,7 +44,7 @@ public class Config {
             ppt.load(in);
         } catch (IOException e) {
             log.error("读取配置文件失败");
-            Launcher.exitApplication(-2);
+            ErrorHandler.displayErrorMessageAndExit(e, "读取配置文件失败", -2);
         }
         configList.forEach((name, preference) -> {
             switch (preference.type) {
@@ -71,6 +70,7 @@ public class Config {
             ppt.store(new FileWriter(configDir + File.separator + configFileName), "FPA Player Settings");
         } catch (IOException e) {
             log.error("储存配置失败");
+            ErrorHandler.displayErrorMessage(e, "储存配置失败");
             System.exit(-2);
         }
         log.debug("储存配置成功");
@@ -113,26 +113,26 @@ public class Config {
         if (!dir.exists()) {
             if (dir.getParentFile() == null || !dir.getParentFile().canWrite()) {
                 log.error("父目录不存在或没有创建文件夹的权限");
-                Launcher.exitApplication(-3);
+                ErrorHandler.displayErrorMessageAndExit((Exception) null, "父目录不存在或没有创建文件夹的权限", -3);
             }
             if (!dir.mkdir()) {
                 log.error("无法创建config文件夹");
-                Launcher.exitApplication(-2);
+                ErrorHandler.displayErrorMessageAndExit((Exception) null, "无法创建config文件夹", -2);
             }
         } else {
             if (!dir.isDirectory()) {
                 log.error("config为一个文件，无法创建文件夹");
-                Launcher.exitApplication(-2);
+                ErrorHandler.displayErrorMessageAndExit((Exception) null, "config为一个文件，无法创建文件夹", -2);
             }
         }
         File file = new File(configDir + File.separator + configFileName);
         if (!file.exists()) {
             try {
                 if (!file.createNewFile())
-                    throw new IOException("创建文件失败");
+                    ErrorHandler.displayErrorMessageAndExit((Exception) null, "创建文件失败", -5);
             } catch (IOException e) {
                 log.error("无法创建config文件: {}", e.getMessage());
-                Launcher.exitApplication(-2);
+                ErrorHandler.displayErrorMessageAndExit(e, "无法创建config文件", -2);
             }
         }
         return file;

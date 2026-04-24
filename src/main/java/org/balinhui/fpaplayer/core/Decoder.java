@@ -7,6 +7,7 @@ import org.balinhui.fpaplayer.info.SongInfo;
 import org.balinhui.fpaplayer.nativeapis.MessageFlags;
 import org.balinhui.fpaplayer.nativeapis.NativeAPI;
 import org.balinhui.fpaplayer.util.AudioUtil;
+import org.balinhui.fpaplayer.util.ErrorHandler;
 import org.balinhui.fpaplayer.util.FlacCoverExtractor;
 import org.balinhui.fpaplayer.util.Resample;
 import org.bytedeco.ffmpeg.avcodec.AVCodec;
@@ -82,7 +83,8 @@ public class Decoder implements Runnable {
             log.trace("打开文件");
             if (avformat_find_stream_info(fmtCtx, (PointerPointer<?>) null) < 0) {
                 log.error("找不到流信息");
-                throw new RuntimeException("Cant find stream info");
+                ErrorHandler.displayErrorMessage((Exception) null, "Cant find stream info");
+                return null;
             }
             AVStream stream = null;
             for (int i = 0; i < fmtCtx.nb_streams(); i++) {
@@ -111,7 +113,7 @@ public class Decoder implements Runnable {
                     coverData = FlacCoverExtractor.extractFlacCover(path);
                 } catch (IOException e) {
                     log.fatal(e.getMessage());
-                    throw new RuntimeException(e);
+                    ErrorHandler.displayErrorMessage(e, null);
                 }
                 if (coverData == null)
                     log.error("没有找到封面");
@@ -211,15 +213,16 @@ public class Decoder implements Runnable {
             AVCodecContext codecCtx = avcodec_alloc_context3(codec);
             if (codecCtx.isNull()) {
                 log.fatal("Doest allocate context");
-                throw new RuntimeException("Doest allocate context");
+                ErrorHandler.displayErrorMessageAndExit((Exception) null, "Doest allocate context", -5);
             }
             if (avcodec_parameters_to_context(codecCtx, codecPar) < 0) {
                 log.fatal("Cant copy parameters to context");
-                throw new RuntimeException("Cant copy parameters to context");
+                ErrorHandler.displayErrorMessageAndExit((Exception) null,
+                        "Cant copy parameters to context", -5);
             }
             if (avcodec_open2(codecCtx, codec, (PointerPointer<?>) null) < 0) {
                 log.fatal("Cant open decoder");
-                throw new RuntimeException("Cant open decoder");
+                ErrorHandler.displayErrorMessageAndExit((Exception) null, "Cant open decoder", -5);
             }
 
             //受支持的格式只有flt和s16，如果歌曲的格式不是这两种之一，则一定会进行重采样，且格式会统一为flt
@@ -252,7 +255,8 @@ public class Decoder implements Runnable {
             AVFrame frame = av_frame_alloc();
             if (packet.isNull() || frame.isNull()) {
                 log.fatal("Cant allocate packet or frame");
-                throw new RuntimeException("Cant allocate packet or frame");
+                ErrorHandler.displayErrorMessageAndExit((Exception) null, "Cant allocate packet or frame",
+                        -5);
             }
             BytePointer[] rawData = new BytePointer[1];
             mainloop:

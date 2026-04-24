@@ -10,6 +10,7 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.balinhui.fpaplayer.util.ErrorHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,8 @@ public class LyricsPane extends ScrollPane {
             if (getViewportBounds() != null) {
                 lookupAll(".viewport").forEach(node -> {
                     node.setStyle("-fx-background-color: transparent;");
-                    if (node instanceof Region) {
-                        ((Region) node).setBackground(Background.EMPTY);
+                    if (node instanceof Region region) {
+                        region.setBackground(Background.EMPTY);
                     }
                 });
             }
@@ -84,7 +85,7 @@ public class LyricsPane extends ScrollPane {
     public void changePosition(String position) {
         if (realLyrics.isEmpty()) return;
         if (!position.matches("center") && !position.matches("left") && !position.matches("right"))
-            throw new IllegalArgumentException("position的值未知");
+            ErrorHandler.displayErrorMessageAndExit((Exception) null, "position的值未知", -5);
         realLyrics.forEach(lyricLine -> lyricLine.changePosition(position));
     }
 

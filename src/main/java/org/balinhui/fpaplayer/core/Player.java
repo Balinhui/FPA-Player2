@@ -207,7 +207,8 @@ public class Player implements Runnable {
             try {
                 paused = CurrentStatus.waitUntilNotPaused(this);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
+                paused = true;
             }
             if (paused) {
                 if (CurrentStatus.stateIs(CurrentStatus.States.CLOSE)) {

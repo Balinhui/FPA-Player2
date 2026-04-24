@@ -2,7 +2,6 @@ package org.balinhui.fpaplayer.util;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.balinhui.fpaplayer.Launcher;
 import org.balinhui.fpaplayer.info.SystemInfo;
 
 import java.io.File;
@@ -25,7 +24,7 @@ public class NativeLibraryLoader {
             tempDir = Files.createTempDirectory(TEMP_DIR_PREFIX).toFile();
             tempDir.deleteOnExit();
         } catch (IOException e) {
-            throw new RuntimeException("无法创建临时目录", e);
+            ErrorHandler.displayErrorMessageAndExit(e, "无法创建临时目录", -5);
         }
     }
 
@@ -125,6 +124,7 @@ public class NativeLibraryLoader {
         } catch (UnsatisfiedLinkError e) {
             log.error("加载已存在的库失败: {}", sweepUserPath(path));
             log.error("错误: {}", e.getMessage());
+            ErrorHandler.displayErrorMessage(e, "加载已存在的库失败");
             return false;
         }
     }
@@ -136,7 +136,10 @@ public class NativeLibraryLoader {
         try (InputStream in = NativeLibraryLoader.class.getResourceAsStream("/lib/" + resourceName)) {
             if (in == null) {
                 log.error("找不到资源文件: /lib/{}", resourceName);
-                Launcher.exitApplication(-4);
+                ErrorHandler.displayErrorMessageAndExit(
+                        (Exception) null,
+                        "找不到资源文件: /lib/" + resourceName,
+                        -4);
                 return null;
             }
 
@@ -159,14 +162,14 @@ public class NativeLibraryLoader {
 
                 if (e.getMessage() != null && e.getMessage().contains("jportaudio")) {
                     log.error("提示: 需要 portaudio{}", suffix);
+                    ErrorHandler.displayErrorMessageAndExit(e, "提示: 需要 portaudio库", -4);
                 }
-                Launcher.exitApplication(-4);
+                ErrorHandler.displayErrorMessageAndExit(e, "加载失败: " + fileName, -4);
                 return null;
             }
         } catch (IOException e) {
             log.error("提取库文件失败: {}", libName);
-            e.printStackTrace();
-            Launcher.exitApplication(-4);
+            ErrorHandler.displayErrorMessageAndExit(e, "提取库文件失败: " + libName, -4);
             return null;
         }
     }

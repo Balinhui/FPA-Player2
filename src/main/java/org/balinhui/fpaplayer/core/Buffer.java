@@ -1,5 +1,7 @@
 package org.balinhui.fpaplayer.core;
 
+import org.balinhui.fpaplayer.util.ErrorHandler;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +25,7 @@ public class Buffer {
 
     private Buffer() {
         if (instance != null)
-            throw new RuntimeException("非正常获取实例");
+            ErrorHandler.displayErrorMessageAndExit((Exception) null, "非正常获取实例", -5);
     }
 
     public static Buffer getInstance() {
@@ -53,7 +55,7 @@ public class Buffer {
             queue.put(data);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("队列操作被中断", e);
+            ErrorHandler.displayErrorMessageAndExit(e, null, -5);
         }
         return floatData.get(pos);
     }
@@ -86,7 +88,8 @@ public class Buffer {
         try {
             queue.put(data);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+            ErrorHandler.displayErrorMessageAndExit(e, "队列操作被中断", -5);
         }
         return shortData.get(pos);
     }
@@ -102,7 +105,8 @@ public class Buffer {
         try {
             queue.put(data);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+            ErrorHandler.displayErrorMessage(e, null);
         }
     }
 
@@ -111,7 +115,8 @@ public class Buffer {
             return queue.take();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("从缓冲区获取数据被中断", e);
+            ErrorHandler.displayErrorMessageAndExit(e, "从缓冲区获取数据被中断", -5);
+            return null;
         }
     }
 
@@ -139,8 +144,10 @@ public class Buffer {
         public float[] getFloatArray() {
             if (end) return null;
             if (currentDataType != DataType.FLOAT) {
-                throw new IllegalStateException(
-                        String.format("需求类型与当前类型不符: 需要 FLOAT, 实际 %s", currentDataType)
+                ErrorHandler.displayErrorMessageAndExit(
+                        (Exception) null,
+                        String.format("需求类型与当前类型不符: 需要 FLOAT, 实际 %s", currentDataType),
+                        -5
                 );
             }
             return floatData.get(pos);
@@ -149,8 +156,10 @@ public class Buffer {
         public short[] getShortArray() {
             if (end) return null;
             if (currentDataType != DataType.SHORT) {
-                throw new IllegalStateException(
-                        String.format("需求类型与当前类型不符: 需要 SHORT, 实际 %s", currentDataType)
+                ErrorHandler.displayErrorMessageAndExit(
+                        (Exception) null,
+                        String.format("需求类型与当前类型不符: 需要 SHORT, 实际 %s", currentDataType),
+                        -5
                 );
             }
             return shortData.get(pos);
