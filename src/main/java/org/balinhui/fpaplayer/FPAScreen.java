@@ -144,7 +144,8 @@ public class FPAScreen extends Application {
         title.setFont(new Font(25));
         title.setVisible(false);
         title.setManaged(false);
-        title.maxWidthProperty().bind(leftPane.widthProperty());
+        title.maxWidthProperty().bind(Bindings.createDoubleBinding(() ->
+                leftPane.getWidth() * 0.8, leftPane.widthProperty()));
         title.setAlignment(Pos.CENTER);
         if (Config.get("app.darkMode").value().bValue)
             title.setTextFill(Color.WHITE);
