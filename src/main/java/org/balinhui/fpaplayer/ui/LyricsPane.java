@@ -10,6 +10,7 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.balinhui.fpaplayer.FPAScreen;
 import org.balinhui.fpaplayer.util.ErrorHandler;
 
 import java.util.ArrayList;
@@ -136,6 +137,7 @@ public class LyricsPane extends ScrollPane {
     }
 
     public void scrollToTime(long time) {
+        if (!FPAScreen.isRightPaneVisible) return;
         int left = 0;
         int right = realLyrics.size() - 1;
         int targetIndex = -1;

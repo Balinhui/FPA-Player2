@@ -46,7 +46,7 @@ public class FPAScreen extends Application {
 
     private TranslateTransition rightPaneSlideOut;
     private TranslateTransition rightPaneSlideIn;
-    private boolean isRightPaneVisible = true;
+    public static boolean isRightPaneVisible = true;
 
     private Timeline coverTimeLine;
     private static TranslateTransition coverTransitionUp;
