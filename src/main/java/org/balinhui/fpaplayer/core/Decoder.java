@@ -122,7 +122,6 @@ public class Decoder implements Runnable {
                 if (coverPkt != null && coverPkt.data() != null && coverPkt.size() > 0) {
                     coverData = new byte[coverPkt.size()];
                     coverPkt.data().get(coverData);
-                    av_packet_free(coverPkt);
                 }
             }
             double totalDurationSeconds = fmtCtx.duration() / (double) AV_TIME_BASE;
