@@ -120,7 +120,7 @@ public class FPAScreen extends Application {
                         OperableControls.cover.setOnMousePressed(null);
                     }
                 }));
-        stage.setMinHeight(370);
+        stage.setMinHeight(373);
         stage.setMinWidth(280);
         stage.show();
         OperableControls.mainWindow = stage;
