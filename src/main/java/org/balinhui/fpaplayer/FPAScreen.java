@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -145,6 +146,9 @@ public class FPAScreen extends Application {
         title.setManaged(false);
         title.maxWidthProperty().bind(leftPane.widthProperty());
         title.setAlignment(Pos.CENTER);
+        if (Config.get("app.darkMode").value().bValue)
+            title.setTextFill(Color.WHITE);
+        else title.setTextFill(Color.BLACK);
         //title.setStyle("-fx-background-color:purple");
         initCoverTransitionAnimation(cover, title);
 
@@ -424,6 +428,11 @@ public class FPAScreen extends Application {
         openSetting.setDarkMode(darkMode);
         fullScreen.setDarkMode(darkMode);
         OperableControls.lyricsPane.setDarkMode(darkMode);
+        if (darkMode) {
+            title.setTextFill(Color.WHITE);
+        } else {
+            title.setTextFill(Color.BLACK);
+        }
         //TODO 背景深色
     }
 
