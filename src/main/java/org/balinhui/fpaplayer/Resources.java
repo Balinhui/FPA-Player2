@@ -37,7 +37,8 @@ public class Resources {
     public static class LibraryRes {
         public static final Map<String, List<SystemInfo.Name>> libs = new LinkedHashMap<>(Map.of(
                 "global", List.of(SystemInfo.Name.WINDOWS, SystemInfo.Name.MACOS, SystemInfo.Name.LINUX),
-                "jportaudio", List.of(SystemInfo.Name.WINDOWS, SystemInfo.Name.MACOS, SystemInfo.Name.LINUX)
+                "jportaudio", List.of(SystemInfo.Name.WINDOWS, SystemInfo.Name.MACOS, SystemInfo.Name.LINUX),
+                "windows", List.of(SystemInfo.Name.WINDOWS)
         ));
     }
 }

@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.balinhui.fpaplayer.info.SystemInfo;
+import org.balinhui.fpaplayer.nativeapis.NativeAPI;
+import org.balinhui.fpaplayer.nativeapis.Win32;
 import org.balinhui.fpaplayer.ui.LyricsPane;
 import org.balinhui.fpaplayer.ui.PButton;
 import org.balinhui.fpaplayer.util.Config;
@@ -91,8 +93,11 @@ public class FPAScreen extends Application {
         double width = Config.get("app.width").value().dValue;
         double height = Config.get("app.height").value().dValue;
         Scene scene = new Scene(root, width == -1 ? 600 : width, height == -1 ? 400 : height);
-        if (SystemInfo.systemName == SystemInfo.Name.WINDOWS)
+        if (SystemInfo.systemName == SystemInfo.Name.WINDOWS && Config.get("app.supportMica").value().bValue) {
             stage.initStyle(StageStyle.UNIFIED);
+            scene.setFill(Color.TRANSPARENT);
+            root.setStyle("-fx-background-color:transparent");
+        }
         stage.setTitle(Resources.StringRes.title);
         stage.setScene(scene);
         double x = Config.get("app.x").value().dValue;
@@ -121,7 +126,25 @@ public class FPAScreen extends Application {
         OperableControls.mainWindow = stage;
         control.onWindowShow();
         stage.setOnCloseRequest(event -> control.closeWindow());
-        //TODO 设置背景
+        //设置背景
+        Win32.Effects effect = Win32.Effects.MICA;
+        String storedEffect = Config.get("app.effectType").value().sValue;
+        if (storedEffect.equals("trans")) effect = Win32.Effects.TRANS;
+        else if (storedEffect.equals("tabbed")) effect = Win32.Effects.TABBED;
+        Config.set(
+                "app.supportMica",
+                NativeAPI.applyWindowsEffect(effect)
+        );
+
+        //设置暗黑模式
+        boolean hr = NativeAPI.setDarkMode(Config.get("app.darkMode").value().bValue);
+        if (!hr) {
+            if (Config.get("app.darkMode").value().bValue) {
+                root.setStyle("-fx-background-color:black");
+            } else {
+                root.setStyle("-fx-baclground-color:white");
+            }
+        }
     }
 
     @Override
@@ -423,6 +446,7 @@ public class FPAScreen extends Application {
      */
     public static void setDarkMode(boolean darkMode) {
         if (Config.get("app.darkMode").value().bValue == darkMode) return;
+        boolean hr = NativeAPI.setDarkMode(darkMode);
         choose.setDarkMode(darkMode);
         pause.setDarkMode(darkMode);
         next.setDarkMode(darkMode);
@@ -430,11 +454,12 @@ public class FPAScreen extends Application {
         fullScreen.setDarkMode(darkMode);
         OperableControls.lyricsPane.setDarkMode(darkMode);
         if (darkMode) {
+            if (!hr) OperableControls.root.setStyle("-fx-background-color:black");
             title.setTextFill(Color.WHITE);
         } else {
+            if (!hr) OperableControls.root.setStyle("-fx-background-color:white");
             title.setTextFill(Color.BLACK);
         }
-        //TODO 背景深色
     }
 
     /**
