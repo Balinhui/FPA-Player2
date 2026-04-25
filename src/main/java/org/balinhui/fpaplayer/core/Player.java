@@ -46,6 +46,7 @@ public class Player implements Runnable {
             initialize();
 
             isWasapiSupported = hostApiTypeIdToHostApiIndex(HOST_API_TYPE_WASAPI) > 0;
+            if (!isWasapiSupported) Config.set("audio.openWasapi", false);
             log.info("对 wasapi 的支持情况: {}", isWasapiSupported ? "支持" : "不支持");
             deviceId = getDefaultOutputDevice();
             if (isWasapiSupported && Config.get("audio.openWasapi").value().bValue)
