@@ -154,6 +154,7 @@ public class FPAControl {
                     if (song.cover != null)
                         FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
                     FPAScreen.setPauseButton(true);
+                    FPAScreen.showTitle(Lyrics.findTitle(song.metadata));
                 });
                 uiPlayer = new UIPlayer(
                         song.durationSeconds * 1000,
@@ -169,11 +170,14 @@ public class FPAControl {
                           Event onPerSongFinish) {
         CurrentStatus.resetTime(song.durationSeconds, song.totalSamples);
         decoder.start(output, onDecodeFinish);
+        //更新UI
         FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
         FPAScreen.setDisplayLyrics(true);
         if (song.cover != null)
             FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
         FPAScreen.setPauseButton(true);
+        FPAScreen.showTitle(Lyrics.findTitle(song.metadata));
+
         uiPlayer = new UIPlayer(song.durationSeconds * 1000,
                 FPAScreen.OperableControls.lyricsPane,
                 FPAScreen.OperableControls.progressBar
@@ -191,6 +195,7 @@ public class FPAControl {
                 FPAScreen.OperableControls.cover.setImage(Resources.ImageRes.cover);
                 FPAScreen.OperableControls.progressBar.setProgress(-1);
                 FPAScreen.setPauseButton(false);
+                FPAScreen.hideTitle();
                 FPAScreen.OperableControls.lyricsPane.release();
             });
         };

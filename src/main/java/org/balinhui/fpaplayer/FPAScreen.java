@@ -9,6 +9,7 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -38,12 +39,15 @@ public class FPAScreen extends Application {
     private static PButton openSetting;
     private static PButton fullScreen;
     private static VBox rightPane;
+    private static Label title;
 
     private TranslateTransition rightPaneSlideOut;
     private TranslateTransition rightPaneSlideIn;
     private boolean isRightPaneVisible = true;
 
     private Timeline coverTimeLine;
+    private static TranslateTransition coverTransitionUp;
+    private static TranslateTransition coverTransitionDown;
 
     private FPAControl control;
 
@@ -125,15 +129,26 @@ public class FPAScreen extends Application {
     }
 
     private VBox createLeftPane(Pane parent) {
-        VBox leftPane = new VBox();
+        VBox leftPane = new VBox(10);
         HBox.setHgrow(leftPane, Priority.ALWAYS);
         leftPane.prefWidthProperty().bind(parent.widthProperty().divide(2));
         //leftPane.setStyle("-fx-background-color:blue");
         leftPane.setAlignment(Pos.CENTER);
+        leftPane.setPadding(new Insets(10));
 
         ImageView cover = createImageView(leftPane);
         OperableControls.cover = cover;
-        leftPane.getChildren().addAll(cover);
+
+        title = new Label();
+        title.setFont(new Font(25));
+        title.setVisible(false);
+        title.setManaged(false);
+        title.maxWidthProperty().bind(leftPane.widthProperty());
+        title.setAlignment(Pos.CENTER);
+        //title.setStyle("-fx-background-color:purple");
+        initCoverTransitionAnimation(cover, title);
+
+        leftPane.getChildren().addAll(cover, title);
         return leftPane;
     }
 
@@ -349,12 +364,14 @@ public class FPAScreen extends Application {
     }
 
     private void hideRightPane(Pane pane) {
+        rightPaneSlideOut.stop();
         rightPaneSlideOut.setFromX(0);
         rightPaneSlideOut.setToX(pane.getWidth());
         rightPaneSlideOut.play();
     }
 
     private void showRightPane(Pane leftPane, Pane rightPane, Pane mainPane) {
+        rightPaneSlideIn.stop();
         leftPane.prefWidthProperty().unbind();
         leftPane.prefWidthProperty().bind(mainPane.widthProperty().divide(2));
         rightPane.prefWidthProperty().bind(mainPane.widthProperty().divide(2));
@@ -363,6 +380,37 @@ public class FPAScreen extends Application {
         rightPaneSlideIn.setFromX(rightPane.getWidth());
         rightPaneSlideIn.setToX(0);
         rightPaneSlideIn.play();
+    }
+
+    private void initCoverTransitionAnimation(ImageView cover, Label title) {
+        coverTransitionUp = new TranslateTransition(Duration.millis(ANIMATION_TIME * 4), cover);
+        coverTransitionUp.setOnFinished(actionEvent -> title.setVisible(true));
+
+        coverTransitionDown = new TranslateTransition(Duration.millis(ANIMATION_TIME * 4), cover);
+    }
+
+    public static void showTitle(String context) {
+        if (context == null) return;
+        if (title.isVisible()) {
+            title.setText(context);
+        } else {
+            coverTransitionUp.stop();
+            title.setText(context);
+            title.setManaged(true);
+            coverTransitionUp.setFromY(21.5);
+            coverTransitionUp.setToY(0);
+            coverTransitionUp.play();
+        }
+    }
+
+    public static void hideTitle() {
+        if (!title.isVisible()) return;
+        coverTransitionDown.stop();
+        title.setVisible(false);
+        title.setManaged(false);
+        coverTransitionDown.setFromY(-21.5);
+        coverTransitionDown.setToY(0);
+        coverTransitionDown.play();
     }
 
     /**

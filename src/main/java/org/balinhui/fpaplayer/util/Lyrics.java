@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 
 public class Lyrics {
 
-    private static final Pattern lyricsPattern = Pattern.compile("lyrics", java.util.regex.Pattern.CASE_INSENSITIVE);
+    private static final Pattern lyricsPattern = Pattern.compile("lyrics", Pattern.CASE_INSENSITIVE);
+    private static final Pattern titlePattern = Pattern.compile("title", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern timePattern = Pattern.compile("\\[(\\d{2}:\\d{2}\\.\\d{2,3})]");
 
@@ -61,5 +62,15 @@ public class Lyrics {
             if (lyric.charAt(i) != ' ') return false;
         }
         return true;
+    }
+
+    public static String findTitle(Map<String, String> metadata) {
+        for (String s : metadata.keySet()) {
+            Matcher matcher = titlePattern.matcher(s);
+            if (matcher.find()) {
+                return metadata.get(s);
+            }
+        }
+        return null;
     }
 }
