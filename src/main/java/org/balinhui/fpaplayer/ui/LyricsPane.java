@@ -24,10 +24,10 @@ public class LyricsPane extends ScrollPane {
     private int currentLine = -1;
     private long latestCall = 0;
 
-    public LyricsPane(VBox box) {
-        super(box);
-        this.lyricsContainer = box;
-        box.prefWidthProperty().bind(prefWidthProperty());
+    public LyricsPane() {
+        this.lyricsContainer = new VBox(15);
+        lyricsContainer.prefWidthProperty().bind(prefWidthProperty());
+        setContent(lyricsContainer);
         layoutBoundsProperty().addListener((obs, old, bounds) -> {
             if (getViewportBounds() != null) {
                 lookupAll(".viewport").forEach(node -> {
@@ -53,12 +53,18 @@ public class LyricsPane extends ScrollPane {
                     if (currentLine != -1) scrollToLine(currentLine, true, 100);
                 }
         );
+        hvalueProperty().addListener((obs, old, val) -> {
+            if (val.doubleValue() > 0) {
+                setHvalue(0);//防止左右滚动
+            }
+        });
     }
 
     public void setLyrics(TreeMap<Long, List<String>> lyrics) {
         addPlaceholderComponents();
         for (Map.Entry<Long, List<String>> entry : lyrics.entrySet()) {
             LyricLine lyricLine = new LyricLine(entry.getKey(), entry.getValue().toArray(value -> new String[0]));
+            lyricLine.maxWidthProperty().bind(lyricsContainer.widthProperty());
             this.realLyrics.add(lyricLine);
             this.lyricsContainer.getChildren().add(lyricLine);
         }

@@ -324,7 +324,7 @@ public class FPAScreen extends Application {
 
 
     private LyricsPane createLyricsPane(Pane parent) {
-        LyricsPane lyricsPane = new LyricsPane(new VBox(15));
+        LyricsPane lyricsPane = new LyricsPane();
         lyricsPane.setStyle("-fx-background-color:transparent");
         lyricsPane.prefWidthProperty().bind(parent.widthProperty());
         lyricsPane.prefHeightProperty().bind(Bindings.createDoubleBinding(
