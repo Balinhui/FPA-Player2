@@ -25,7 +25,6 @@ import org.bytedeco.javacpp.PointerPointer;
 import org.bytedeco.javacpp.ShortPointer;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -151,26 +150,24 @@ public class Decoder implements Runnable {
      */
     private Map<String, String> getMetadata(AVFormatContext fmtCtx, AVStream stream) {
         Map<String, String> metadata = new HashMap<>();
-        AVDictionary dictionary = stream.metadata() == null ? fmtCtx.metadata() : stream.metadata();
-        AVDictionaryEntry entry = null;
-        while ((entry = av_dict_get(dictionary, "", entry, AV_DICT_IGNORE_SUFFIX)) != null) {
-            metadata.put(
-                    entry.key().getString(Charset.defaultCharset()),
-                    entry.value().getString(Charset.defaultCharset())
-            );
+        addMetadataToMap(fmtCtx.metadata(), metadata);
+        if (stream.metadata() != null) {
+            addMetadataToMap(stream.metadata(), metadata);
         }
-        String[] l = {"lyrics", "LYRICS", "lyrics-XXX"};
-        for (String s : l) {
-            if (metadata.containsKey(s)) return metadata;
-        }
-        log.warn("总元数据中没有找到歌词信息，开始重点查找");
-        if ((entry = av_dict_get(fmtCtx.metadata(), "lyrics", null, AV_DICT_IGNORE_SUFFIX)) != null) {
-            metadata.put(
-                    entry.key().getString(Charset.defaultCharset()),
-                    entry.value().getString(Charset.defaultCharset())
-            );
-        }
+
         return metadata;
+    }
+
+    private void addMetadataToMap(AVDictionary dict, Map<String, String> target) {
+        AVDictionaryEntry entry = null;
+        while ((entry = av_dict_get(dict, "", entry, AV_DICT_IGNORE_SUFFIX)) != null) {
+            String key = entry.key().getString();
+            String value = entry.value().getString();
+
+            if (key != null && value != null) {
+                target.put(key, value);
+            }
+        }
     }
 
     public void start(OutputInfo outputInfo, Event onDecodeFinish) {
