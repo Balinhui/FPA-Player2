@@ -41,6 +41,7 @@ public class FPAPreloader extends Preloader {
 
         primaryStage.setScene(scene);
         primaryStage.initStyle(StageStyle.UNDECORATED);
+        primaryStage.setOpacity(0.9);
         primaryStage.setTitle("FPA Player Preloader");
         primaryStage.setAlwaysOnTop(true);
         primaryStage.show();

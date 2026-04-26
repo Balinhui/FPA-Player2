@@ -138,6 +138,7 @@ public class LyricsPane extends ScrollPane {
 
     public void scrollToTime(long time) {
         if (!FPAScreen.isRightPaneVisible) return;
+        if (realLyrics.size() == 1) return;
         int left = 0;
         int right = realLyrics.size() - 1;
         int targetIndex = -1;
