@@ -2,6 +2,7 @@ package org.balinhui.fpaplayer.ui;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.ProgressBar;
+import org.balinhui.fpaplayer.core.CurrentStatus;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -19,6 +20,8 @@ public class UIPlayer {
     private volatile boolean playing = false;
 
     private static final long UPDATE_INTERVAL_MS = 10;//ms
+
+    private int counter = 0;
 
     public UIPlayer(double totalTime, LyricsPane lyricsPane, ProgressBar progressBar) {
         this.totalTime = totalTime;
@@ -46,8 +49,14 @@ public class UIPlayer {
                 if (l - lastUpdate >= UPDATE_INTERVAL_MS * 1000000) {
                     lastUpdate = l;
 
-                   lyricsPane.scrollToTime(currentPosition);
-                   progressBar.setProgress(currentPosition / totalTime);
+                    lyricsPane.scrollToTime(currentPosition);
+                    progressBar.setProgress(currentPosition / totalTime);
+
+                    if (counter > 3000) {
+                        syncTime((long) CurrentStatus.getCurrentTimeMillis());
+                        counter = 0;
+                    }
+                    counter++;
                 }
             }
         };
