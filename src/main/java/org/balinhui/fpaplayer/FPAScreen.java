@@ -62,7 +62,7 @@ public class FPAScreen extends Application {
     @Override
     public void init() throws Exception {
         control = FPAControl.getControl();
-        control.init();
+        control.init(this);
     }
 
     @Override

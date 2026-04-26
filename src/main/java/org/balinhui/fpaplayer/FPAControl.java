@@ -1,5 +1,6 @@
 package org.balinhui.fpaplayer;
 
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import org.apache.logging.log4j.LogManager;
@@ -36,14 +37,24 @@ public class FPAControl {
         return control;
     }
 
-    public void init() {
+    public void init(Application app) {
         log.trace("初始化开始");
+        app.notifyPreloader(new FPAPreloader.Notification("初始化开始...", 0.16));
+
         Config.loadConfig();
+        app.notifyPreloader(new FPAPreloader.Notification("加载配置", 0.32));
+
         NativeLibraryLoader.load(Resources.LibraryRes.libs);
+        app.notifyPreloader(new FPAPreloader.Notification("加载本地库", 0.48));
 
         decoder = Decoder.getInstance();
+        app.notifyPreloader(new FPAPreloader.Notification("初始化ffmpeg", 0.64));
+
         player = Player.getInstance(createOnPlayFinishHandler());
+        app.notifyPreloader(new FPAPreloader.Notification("初始化音频设备", 0.8));
+
         log.trace("初始化结束");
+        app.notifyPreloader(new FPAPreloader.Notification("初始化结束", 1));
     }
 
     public void onWindowShow() {
