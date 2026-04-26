@@ -36,6 +36,7 @@ public class Launcher {
 
     public static void main(String[] args) {
         if (!readSystem()) exitApplication(-1);
+        System.setProperty("javafx.preloader", FPAPreloader.class.getName());
         Application.launch(FPAScreen.class, args);
     }
 }

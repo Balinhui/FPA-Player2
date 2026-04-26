@@ -3,6 +3,7 @@ module org.balinhui.fpaplayer {
     requires org.apache.logging.log4j;
     requires org.bytedeco.javacpp;
     requires org.bytedeco.ffmpeg;
+    requires java.desktop;
 
     exports org.balinhui.fpaplayer;
     exports org.balinhui.fpaplayer.ui;

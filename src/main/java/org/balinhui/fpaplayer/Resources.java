@@ -23,6 +23,11 @@ public class Resources {
         public static final Image full_screen_white = new Image(Resources.class.getResourceAsStream("/image/full_screen_white.png"));
         public static final Image cancel_full_screen_black = new Image(Resources.class.getResourceAsStream("/image/cancel_full_screen_black.png"));
         public static final Image cancel_full_screen_white = new Image(Resources.class.getResourceAsStream("/image/cancel_full_screen_white.png"));
+        public static final Image fpa16 = new Image(Resources.class.getResourceAsStream("/image/FPA16.png"));
+        public static final Image fpa32 = new Image(Resources.class.getResourceAsStream("/image/FPA32.png"));
+        public static final Image fpa64 = new Image(Resources.class.getResourceAsStream("/image/FPA64.png"));
+        public static final Image fpa128 = new Image(Resources.class.getResourceAsStream("/image/FPA128.png"));
+        public static final Image fpa256 = new Image(Resources.class.getResourceAsStream("/image/FPA256.png"));
     }
 
     public static class StringRes {

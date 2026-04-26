@@ -25,6 +25,9 @@ import org.balinhui.fpaplayer.nativeapis.Win32;
 import org.balinhui.fpaplayer.ui.LyricsPane;
 import org.balinhui.fpaplayer.ui.PButton;
 import org.balinhui.fpaplayer.util.Config;
+import org.balinhui.fpaplayer.util.ErrorHandler;
+
+import java.awt.*;
 
 public class FPAScreen extends Application {
 
@@ -106,7 +109,7 @@ public class FPAScreen extends Application {
         if (y != -1) stage.setY(y);
         stage.setFullScreen(Config.get("app.fullScreen").value().bValue);
         stage.setFullScreenExitHint("");
-        stage.widthProperty().addListener((
+        stage.widthProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     if (newValue.doubleValue() < 500 && isRightPaneVisible) {
                         isRightPaneVisible = false;
@@ -119,7 +122,28 @@ public class FPAScreen extends Application {
                         showRightPane(leftPane, rightPane, mainPane);
                         OperableControls.cover.setOnMousePressed(null);
                     }
-                }));
+                }
+        );
+        stage.getIcons().addAll(
+                Resources.ImageRes.fpa16,
+                Resources.ImageRes.fpa32,
+                Resources.ImageRes.fpa64,
+                Resources.ImageRes.fpa128,
+                Resources.ImageRes.fpa256
+        );
+        //为macOS的dock添加图标
+        if (SystemInfo.systemName == SystemInfo.Name.MACOS) {
+            try {
+                if (Taskbar.isTaskbarSupported()) {
+                    Image ico = Toolkit.getDefaultToolkit().getImage(
+                            Resources.class.getResource("/image/FPA256.png")
+                    );
+                    Taskbar.getTaskbar().setIconImage(ico);
+                }
+            } catch (RuntimeException e) {
+                ErrorHandler.displayErrorMessage(e, "无法应用macOS图标");
+            }
+        }
         stage.setMinHeight(373);
         stage.setMinWidth(280);
         stage.show();
