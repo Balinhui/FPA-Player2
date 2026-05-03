@@ -283,6 +283,12 @@ public class Decoder implements Runnable {
                     }
                     if (ret < 0) {
                         log.error("接受帧失败, {}", ret);
+                        if (ret == AVERROR_INVALIDDATA()) {
+                            log.warn("跳过无效数据");
+                            av_frame_unref(frame);
+                            continue;
+                        }
+
                         if (draining) break mainLoop;
                         av_frame_unref(frame);
                         av_packet_unref(packet);
@@ -310,7 +316,6 @@ public class Decoder implements Runnable {
                 }
                 av_packet_unref(packet);
             }
-
 
             log.trace("释放解码资源");
             if (needsResample)
