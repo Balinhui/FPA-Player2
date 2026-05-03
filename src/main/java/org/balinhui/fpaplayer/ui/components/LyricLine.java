@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -33,8 +34,7 @@ public class LyricLine extends VBox {
      * @param time 歌词的时间戳，毫秒值
      * @param lyric 默认主要显示第一个歌词，其他为翻译，最多允许三行，多余将忽略
      */
-    public LyricLine(long time, String... lyric) {
-        //setStyle("-fx-background-color:gray");
+    public LyricLine(boolean isFake, long time, String... lyric) {
         String position = Config.get("lyric.position").value().sValue;
         if (position.equals("left")) setAlignment(Pos.CENTER_LEFT);
         else if (position.equals("right")) setAlignment(Pos.CENTER_RIGHT);
@@ -42,6 +42,14 @@ public class LyricLine extends VBox {
         setPadding(new Insets(0, 36, 0, 0));
         blur.setRadius(BLUE_RADIUS);
         setEffect(blur);
+        if (!isFake) {
+            setOnMouseEntered(mouseEvent -> {
+                if (Config.get("app.darkMode").value().bValue)
+                    setBackground(Background.fill(Color.rgb(55, 55, 55, 0.2)));
+                else setBackground(Background.fill(Color.rgb(155, 155, 155, 0.2)));
+            });
+            setOnMouseExited(mouseEvent -> setBackground(Background.fill(Color.TRANSPARENT)));
+        }
 
         this.time = time;
         String[] addLyric;
@@ -54,7 +62,7 @@ public class LyricLine extends VBox {
         for (int i = 0; i < addLyric.length; i++) {
             Label l = new Label(addLyric[i]);
             l.setWrapText(true);
-            //l.setStyle("-fx-background-color:white");
+
             if (position.equals("left")) l.setTextAlignment(TextAlignment.LEFT);
             else if (position.equals("right")) l.setTextAlignment(TextAlignment.RIGHT);
             else l.setTextAlignment(TextAlignment.CENTER);

@@ -64,7 +64,7 @@ public class LyricsPane extends ScrollPane {
     public void setLyrics(TreeMap<Long, List<String>> lyrics) {
         addPlaceholderComponents();
         for (Map.Entry<Long, List<String>> entry : lyrics.entrySet()) {
-            LyricLine lyricLine = new LyricLine(entry.getKey(), entry.getValue().toArray(value -> new String[0]));
+            LyricLine lyricLine = new LyricLine(false, entry.getKey(), entry.getValue().toArray(value -> new String[0]));
             lyricLine.maxWidthProperty().bind(lyricsContainer.widthProperty());
             this.realLyrics.add(lyricLine);
             this.lyricsContainer.getChildren().add(lyricLine);
@@ -76,7 +76,7 @@ public class LyricsPane extends ScrollPane {
 
     private void addPlaceholderComponents() {
         for (int i = 0; i < 2; i++) {
-            this.lyricsContainer.getChildren().add(new LyricLine(-1L, "", ""));
+            this.lyricsContainer.getChildren().add(new LyricLine(true, -1L, "", ""));
         }
     }
 

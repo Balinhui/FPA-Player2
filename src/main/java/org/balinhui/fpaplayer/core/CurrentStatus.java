@@ -31,6 +31,8 @@ public class CurrentStatus {
         return flag;
     }
 
+    ///与播放时间相关
+
     public static void updateTime(int samples) {
         CurrentStatus.playedSamples += samples;
         CurrentStatus.currentTimeMillis = (double) playedSamples / totalSamples * durationSeconds * 1000;
