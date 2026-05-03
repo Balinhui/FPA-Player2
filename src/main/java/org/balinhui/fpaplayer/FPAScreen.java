@@ -11,6 +11,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -92,6 +94,7 @@ public class FPAScreen extends Application {
         bar.getChildren().addAll(progressBar, bottom);
 
         root.getChildren().addAll(mainPane, bar);
+        addFileDrop(root);
 
         double width = Config.get("app.width").value().dValue;
         double height = Config.get("app.height").value().dValue;
@@ -525,5 +528,33 @@ public class FPAScreen extends Application {
                     Resources.ImageRes.play_white
             );
         }
+    }
+
+    private void addFileDrop(VBox root) {
+        //设置文件拖入时的效果
+        root.setOnDragEntered(dragEvent -> {
+            //添加模糊效果
+            BoxBlur blur = new BoxBlur();
+            blur.setWidth(5);
+            blur.setHeight(5);
+            blur.setIterations(1);
+
+            //添加背景压暗效果
+            ColorAdjust darken = new ColorAdjust();
+            darken.setBrightness(-0.2);
+
+            blur.setInput(darken);
+            root.setEffect(blur);
+            dragEvent.consume();
+        });
+
+        //文件离开时取消效果
+        root.setOnDragExited(dragEvent -> {
+            root.setEffect(null);
+            dragEvent.consume();
+        });
+
+        root.setOnDragOver(control::onDragOver);
+        root.setOnDragDropped(control::onDragDropped);
     }
 }

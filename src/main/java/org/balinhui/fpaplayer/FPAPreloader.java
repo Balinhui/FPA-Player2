@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -23,7 +24,7 @@ public class FPAPreloader extends Preloader {
         preloaderStage = primaryStage;
 
         VBox root = new VBox(15);
-        root.setStyle("-fx-background-color:gray");
+        root.setBackground(Background.fill(Color.GRAY));
         root.setAlignment(Pos.CENTER);
 
         ImageView view = new ImageView(Resources.ImageRes.fpa128);
@@ -41,7 +42,6 @@ public class FPAPreloader extends Preloader {
 
         primaryStage.setScene(scene);
         primaryStage.initStyle(StageStyle.UNDECORATED);
-        primaryStage.setOpacity(0.9);
         primaryStage.setTitle("FPA Player Preloader");
         primaryStage.setAlwaysOnTop(true);
         primaryStage.show();

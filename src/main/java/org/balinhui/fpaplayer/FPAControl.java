@@ -3,6 +3,9 @@ package org.balinhui.fpaplayer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.balinhui.fpaplayer.core.CurrentStatus;
@@ -20,6 +23,9 @@ import org.balinhui.fpaplayer.util.Lyrics;
 import org.balinhui.fpaplayer.util.NativeLibraryLoader;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FPAControl {
     private static final Logger log = LogManager.getLogger(FPAControl.class);
@@ -132,6 +138,75 @@ public class FPAControl {
         boolean cValue = Config.get("app.fullScreen").value().bValue;
         FPAScreen.setFullScreen(!cValue);
         Config.set("app.fullScreen", !cValue);
+    }
+
+    public void onDragOver(DragEvent dragEvent) {
+        if (!CurrentStatus.stateIs(CurrentStatus.States.STOP)) {
+            dragEvent.consume();
+            return;
+        }
+        Dragboard board = dragEvent.getDragboard();
+        if (board.hasFiles()) {
+            List<File> files = board.getFiles();
+            if (files.size() == 1) { //如果为单个文件
+                File cFile = files.getFirst();
+                //防止文件夹
+                if (!cFile.isDirectory()) {
+                    for (String name : Resources.SuffixNameRes.suffix_names) {
+                        //如果匹配上音乐文件后缀，就允许
+                        if (cFile.getName().endsWith(name)) {
+                            dragEvent.acceptTransferModes(TransferMode.MOVE);
+                            break;
+                        }
+                    }
+                }
+            } else { //如果是多个文件，就直接允许
+                dragEvent.acceptTransferModes(TransferMode.MOVE);
+            }
+        }
+        dragEvent.consume();
+    }
+
+    public void onDragDropped(DragEvent dragEvent) {
+        /*if (!CurrentStatus.stateIs(CurrentStatus.States.STOP)) {
+            dragEvent.consume();
+            return;
+        }*/
+        Dragboard board = dragEvent.getDragboard();
+        boolean success = false;
+
+        if (board.hasFiles()) {
+            List<File> files = board.getFiles();
+            if (files.size() == 1) { //如果为单个文件
+                String[] path = { files.getFirst().getAbsolutePath() };
+                inputPaths(path);
+            } else { //多个文件进行分析
+                List<File> permitted = new ArrayList<>();//符合条件的文件个数
+                for (File file : files) {
+                    for (String name : Resources.SuffixNameRes.suffix_names) {
+                        if (!file.isDirectory() && file.getName().endsWith(name)) {
+                            permitted.add(file);
+                            break;
+                        }
+                    }
+                }
+                if (permitted.size() != files.size()) {
+                    NativeAPI.displayMessage(
+                            "请注意",
+                            "您所选的文件中有部分可能不是音乐文件，已跳过。",
+                            MessageFlags.Buttons.OK | MessageFlags.Icons.WARNING
+                    );
+                }
+                if (!permitted.isEmpty()) {
+                    //将List<File> 转化为 绝对路径 String[]
+                    String[] filePaths = permitted.stream().map(File::getAbsolutePath).toArray(String[]::new);
+                    inputPaths(filePaths);
+                }
+            }
+            success = true;
+        }
+        dragEvent.setDropCompleted(success);
+        dragEvent.consume();
     }
 
     private void inputPaths(String[] paths) {
