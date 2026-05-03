@@ -9,4 +9,5 @@ module org.balinhui.fpaplayer {
     exports org.balinhui.fpaplayer.ui;
     exports org.balinhui.fpaplayer.util;
     exports org.balinhui.fpaplayer.info;
+    exports org.balinhui.fpaplayer.ui.components;
 }

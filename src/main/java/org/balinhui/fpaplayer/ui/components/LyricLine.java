@@ -1,4 +1,4 @@
-package org.balinhui.fpaplayer.ui;
+package org.balinhui.fpaplayer.ui.components;
 
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -136,7 +136,7 @@ public class LyricLine extends VBox {
         if (translate) {
             if (labels.size() == 3)
                 getChildren().addAll(labels.get(1), labels.get(2));
-            else
+            else if (labels.size() == 2)
                 getChildren().addAll(labels.get(1));
         } else
             getChildren().remove(1, getChildren().size());

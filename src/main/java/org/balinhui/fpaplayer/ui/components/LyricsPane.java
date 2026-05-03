@@ -1,4 +1,4 @@
-package org.balinhui.fpaplayer.ui;
+package org.balinhui.fpaplayer.ui.components;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;

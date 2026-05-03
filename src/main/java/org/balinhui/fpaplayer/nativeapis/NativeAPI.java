@@ -14,8 +14,16 @@ public class NativeAPI {
             hwnd = Global.getHwnd(windowTitle);
             return true;
         } catch (UnsatisfiedLinkError e) {
-            hwnd = -1;
+            hwnd = 0;
             return false;
+        }
+    }
+
+    public static long getHWNDForOthers(String windowTitle) {
+        try {
+            return Global.getHwnd(windowTitle);
+        } catch (UnsatisfiedLinkError e) {
+            return 0;
         }
     }
 
@@ -32,8 +40,20 @@ public class NativeAPI {
         return Win32.applyWindowsEffect(hwnd, Win32.SYSTEM_BACKGROUND, effects.nativeInt);
     }
 
+    public static boolean applyWindowsEffectForOthers(long hwnd, Win32.Effects effects) {
+        if (SystemInfo.systemName != SystemInfo.Name.WINDOWS) return false;
+        return Win32.applyWindowsEffect(hwnd, Win32.SYSTEM_BACKGROUND, effects.nativeInt);
+    }
+
     public static boolean setDarkMode(boolean flag) {
         if (SystemInfo.systemName != SystemInfo.Name.WINDOWS) return false;
+        if (hwnd <= 0) return false;
+        return Win32.applyWindowsEffect(hwnd, Win32.DARK_MODE, flag ? 1 : 0);
+    }
+
+    public static boolean setDarkModeForOthers(long hwnd, boolean flag) {
+        if (SystemInfo.systemName != SystemInfo.Name.WINDOWS) return false;
+        if (hwnd <= 0) return false;
         return Win32.applyWindowsEffect(hwnd, Win32.DARK_MODE, flag ? 1 : 0);
     }
 }

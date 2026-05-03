@@ -22,8 +22,8 @@ import javafx.util.Duration;
 import org.balinhui.fpaplayer.info.SystemInfo;
 import org.balinhui.fpaplayer.nativeapis.NativeAPI;
 import org.balinhui.fpaplayer.nativeapis.Win32;
-import org.balinhui.fpaplayer.ui.LyricsPane;
-import org.balinhui.fpaplayer.ui.PButton;
+import org.balinhui.fpaplayer.ui.components.LyricsPane;
+import org.balinhui.fpaplayer.ui.components.PButton;
 import org.balinhui.fpaplayer.util.Config;
 import org.balinhui.fpaplayer.util.ErrorHandler;
 
@@ -99,7 +99,7 @@ public class FPAScreen extends Application {
         if (SystemInfo.systemName == SystemInfo.Name.WINDOWS && Config.get("app.supportMica").value().bValue) {
             stage.initStyle(StageStyle.UNIFIED);
             scene.setFill(Color.TRANSPARENT);
-            root.setStyle("-fx-background-color:transparent");
+            root.setBackground(Background.fill(Color.TRANSPARENT));
         }
         stage.setTitle(Resources.StringRes.title);
         stage.setScene(scene);
@@ -164,9 +164,9 @@ public class FPAScreen extends Application {
         boolean hr = NativeAPI.setDarkMode(Config.get("app.darkMode").value().bValue);
         if (!hr) {
             if (Config.get("app.darkMode").value().bValue) {
-                root.setStyle("-fx-background-color:black");
+                root.setBackground(Background.fill(Color.BLACK));
             } else {
-                root.setStyle("-fx-baclground-color:white");
+                root.setBackground(Background.fill(Color.WHITE));
             }
         }
     }
@@ -392,7 +392,7 @@ public class FPAScreen extends Application {
 
     private LyricsPane createLyricsPane(Pane parent) {
         LyricsPane lyricsPane = new LyricsPane();
-        lyricsPane.setStyle("-fx-background-color:transparent");
+        lyricsPane.setBackground(Background.fill(Color.TRANSPARENT));
         lyricsPane.prefWidthProperty().bind(parent.widthProperty());
         lyricsPane.prefHeightProperty().bind(Bindings.createDoubleBinding(
                 () -> parent.getHeight() * 0.6,
@@ -469,7 +469,6 @@ public class FPAScreen extends Application {
      * 设置界面暗黑模式，不会将值储存
      */
     public static void setDarkMode(boolean darkMode) {
-        if (Config.get("app.darkMode").value().bValue == darkMode) return;
         boolean hr = NativeAPI.setDarkMode(darkMode);
         choose.setDarkMode(darkMode);
         pause.setDarkMode(darkMode);
@@ -478,10 +477,10 @@ public class FPAScreen extends Application {
         fullScreen.setDarkMode(darkMode);
         OperableControls.lyricsPane.setDarkMode(darkMode);
         if (darkMode) {
-            if (!hr) OperableControls.root.setStyle("-fx-background-color:black");
+            if (!hr) OperableControls.root.setBackground(Background.fill(Color.BLACK));
             title.setTextFill(Color.WHITE);
         } else {
-            if (!hr) OperableControls.root.setStyle("-fx-background-color:white");
+            if (!hr) OperableControls.root.setBackground(Background.fill(Color.WHITE));
             title.setTextFill(Color.BLACK);
         }
     }
@@ -490,7 +489,6 @@ public class FPAScreen extends Application {
      * 设置界面全屏，不会将值储存
      */
     public static void setFullScreen(boolean fullScreenValue) {
-        if (Config.get("app.fullScreen").value().bValue == fullScreenValue) return;
         FPAScreen.OperableControls.mainWindow.setFullScreen(fullScreenValue);
         if (fullScreenValue) {
             fullScreen.setImages(

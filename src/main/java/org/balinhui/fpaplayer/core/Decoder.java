@@ -328,4 +328,10 @@ public class Decoder implements Runnable {
             CurrentStatus.stateTo(CurrentStatus.States.STOP);
         log.trace("当前解码结束");
     }
+
+    public static String getDecoderInfo() {
+        try(BytePointer avVersion = av_version_info()) {
+            return "FFmpeg Version: \n" + avVersion.getString();
+        }
+    }
 }

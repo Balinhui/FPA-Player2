@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 public class Config {
     private static final Logger log = LogManager.getLogger(Config.class);
@@ -107,6 +108,10 @@ public class Config {
         ConfigPreference preference = configList.get(key);
         if (checkType(preference, ConfigType.STR)) return;
         preference.value.set(value);
+    }
+
+    public static Set<String> getConfigsSet() {
+        return configList.keySet();
     }
 
     private static File checkFile() {

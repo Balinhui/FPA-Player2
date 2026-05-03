@@ -1,4 +1,4 @@
-package org.balinhui.fpaplayer.ui;
+package org.balinhui.fpaplayer.ui.components;
 
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -22,38 +22,7 @@ public class PButton extends Button {
     public PButton(String context, ButtonColor color) {
         super(context);
         image = false;
-        if (color == ButtonColor.DEFAULT) {
-            createColorList(
-                    "#ffffff",
-                    "#000000",
-                    "#cccccc",
-                    "#f6f6f6",
-                    "#f6f6f6",
-                    "#595b5d",
-                    "#343536",
-                    "#ffffff",
-                    "#454545",
-                    "#3c3c3c",
-                    "#2f3030",
-                    "#b4b5b5"
-            );
-        } else if (color == ButtonColor.BLUE) {
-            createColorList(
-                    "#0067c0",
-                    "#ffffff",
-                    "#003e73",
-                    "#1975c5",
-                    "#3183ca",
-                    "#c2daef",
-                    "#4cc2ff",
-                    "#000000",
-                    "#42a7dc",
-                    "#99ebff",
-                    "#0091f8",
-                    "#00487c"
-            );
-        }
-        setAppearance();
+        setColor(color);
     }
 
     public PButton(Image lightImage, Image darkImage) {
@@ -86,6 +55,7 @@ public class PButton extends Button {
     }
 
     public void setImages(Image lightImage, Image darkImage) {
+        if (!image) return;
         if (lightImage == this.lightImage && darkImage == this.darkImage) return;
         this.lightImage = lightImage;
         this.darkImage = darkImage;
@@ -94,11 +64,49 @@ public class PButton extends Button {
     }
 
     public void setIconWidth(double width) {
+        if (!image) return;
         if (icon != null) icon.setFitWidth(width);
     }
 
     public void setIconHeight(double height) {
+        if (!image) return;
         if (icon != null) icon.setFitHeight(height);
+    }
+
+    public void setColor(ButtonColor color) {
+        if (image) return;
+        if (color == ButtonColor.DEFAULT) {
+            createColorList(
+                    "#ffffff",
+                    "#000000",
+                    "#cccccc",
+                    "#f6f6f6",
+                    "#f6f6f6",
+                    "#595b5d",
+                    "#343536",
+                    "#ffffff",
+                    "#454545",
+                    "#3c3c3c",
+                    "#2f3030",
+                    "#b4b5b5"
+            );
+        } else if (color == ButtonColor.BLUE) {
+            createColorList(
+                    "#0067c0",
+                    "#ffffff",
+                    "#003e73",
+                    "#1975c5",
+                    "#3183ca",
+                    "#c2daef",
+                    "#4cc2ff",
+                    "#000000",
+                    "#42a7dc",
+                    "#99ebff",
+                    "#0091f8",
+                    "#00487c"
+            );
+        }
+        setAppearance();
     }
 
     private void createColorList(

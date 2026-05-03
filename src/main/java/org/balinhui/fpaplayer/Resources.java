@@ -33,6 +33,22 @@ public class Resources {
     public static class StringRes {
         public static final String title = "FPA Player";
         public static final String choose_file = "选择文件";
+        public static final String setting_title = "设置";
+
+        public static class SettingStringRes {
+            public static final String app = "基本设置";
+            public static final String audio = "音频设置";
+            public static final String lyric = "歌词设置";
+            public static final String about = "关于";
+            public static final String darkMode = "暗黑模式";
+            public static final String effectType = "背景效果类型";
+            public static final String frameNum = "帧大小";
+            public static final String openWasapi = "使用WAS API";
+            public static final String binding = "歌词大小绑定界面";
+            public static final String fontSize = "字体大小";
+            public static final String position = "歌词位置";
+            public static final String translate = "歌词翻译";
+        }
     }
 
     public static class SuffixNameRes {

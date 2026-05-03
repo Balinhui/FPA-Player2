@@ -124,7 +124,8 @@ public class FPAControl {
     }
 
     public void onOpenSettingWindow() {
-        log.debug("Open Setting Button Pressed");
+        //log.debug("Open Setting Button Pressed");
+        SettingScreen.show();
     }
 
     public void onFullScreen() {

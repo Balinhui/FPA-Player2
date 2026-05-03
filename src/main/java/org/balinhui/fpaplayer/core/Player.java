@@ -266,4 +266,7 @@ public class Player implements Runnable {
         }
     }
 
+    public static String getPlayerInfo() {
+        return "PortAudio Version: \n" + getVersion();
+    }
 }

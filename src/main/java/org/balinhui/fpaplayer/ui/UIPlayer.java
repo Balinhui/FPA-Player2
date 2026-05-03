@@ -3,6 +3,7 @@ package org.balinhui.fpaplayer.ui;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.ProgressBar;
 import org.balinhui.fpaplayer.core.CurrentStatus;
+import org.balinhui.fpaplayer.ui.components.LyricsPane;
 
 import java.util.concurrent.atomic.AtomicLong;
 
