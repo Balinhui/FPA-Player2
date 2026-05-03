@@ -254,54 +254,68 @@ public class Decoder implements Runnable {
                 ErrorHandler.displayErrorMessageAndExit((Exception) null, "Cant allocate packet or frame",
                         -5);
             }
+            boolean draining = false;
             BytePointer[] rawData = new BytePointer[1];
-            mainloop:
-            while (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
+            mainLoop: while (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
                     CurrentStatus.stateIs(CurrentStatus.States.PAUSE)) {
-                if (av_read_frame(fmtCtx, packet) < 0)
-                    break;
-                if (packet.stream_index() == streamIndex) {
-                    int ret = avcodec_send_packet(codecCtx, packet);
-                    if (ret < 0)
+                int ret;
+                if (av_read_frame(fmtCtx, packet) < 0) {
+                    draining = true;
+                    avcodec_send_packet(codecCtx, null);
+                } else if (packet.stream_index() == streamIndex) {
+                    ret = avcodec_send_packet(codecCtx, packet);
+                    if (ret < 0 && ret != AVERROR_EAGAIN()) {
+                        log.error("发送包失败, {}", ret);
+                        av_packet_unref(packet);
                         break;
-                    while (true) {
-                        ret = avcodec_receive_frame(codecCtx, frame);
-                        if (ret == AVERROR_EAGAIN() || ret == AVERROR_EOF)
-                            break;
-                        else if (ret < 0) {
-                            log.error("解码出错或者结束解码");
-                            break mainloop;
+                    }
+                } else {
+                    av_packet_unref(packet);
+                    continue;
+                }
+
+                while (true) {
+                    ret = avcodec_receive_frame(codecCtx, frame);
+                    if (ret == AVERROR_EOF() || ret == AVERROR_EAGAIN()) {
+                        if (draining) break mainLoop;
+                        av_frame_unref(frame);
+                        break;
+                    }
+                    if (ret < 0) {
+                        log.error("接受帧失败, {}", ret);
+                        if (draining) break mainLoop;
+                        av_frame_unref(frame);
+                        av_packet_unref(packet);
+                        break mainLoop;
+                    }
+                    int samples = frame.nb_samples();
+                    if (needsResample) {
+                        samples = resample.process(rawData, samples, frame.data());
+                    } else {
+                        rawData[0] = frame.data(0);
+                    }
+                    int arraySize = samples * dstChannels;
+
+                    switch (dstSampleFormat) {
+                        case AV_SAMPLE_FMT_S16 -> {
+                            ShortPointer data = new ShortPointer(rawData[0]);
+                            data.get(buffer.putShortData(samples, frame.nb_samples(), arraySize), 0, arraySize);
                         }
-
-                        int samples = frame.nb_samples();
-                        int oldSamples = samples;
-
-                        if (needsResample) {
-                            samples = resample.process(rawData, samples, frame.data());
-                        } else {
-                            rawData[0] = frame.data(0).position(0);
-                        }
-                        int arraySize = samples * dstChannels;
-
-                        switch (dstSampleFormat) {
-                            case AV_SAMPLE_FMT_S16 -> {
-                                ShortPointer data = new ShortPointer(rawData[0]);
-                                data.get(buffer.putShortData(samples, oldSamples, arraySize), 0, arraySize);
-                            }
-                            case AV_SAMPLE_FMT_FLT -> {
-                                FloatPointer data = new FloatPointer(rawData[0]);
-                                data.get(buffer.putFloatData(samples, oldSamples, arraySize), 0, arraySize);
-                            }
+                        case AV_SAMPLE_FMT_FLT -> {
+                            FloatPointer data = new FloatPointer(rawData[0]);
+                            data.get(buffer.putFloatData(samples, frame.nb_samples(), arraySize), 0, arraySize);
                         }
                     }
+                    av_frame_unref(frame);
                 }
                 av_packet_unref(packet);
             }
+
+
             log.trace("释放解码资源");
             if (needsResample)
                 resample.free();
             avformat_close_input(fmtCtx);
-            avformat_free_context(fmtCtx);
             avcodec_free_context(codecCtx);
             av_frame_free(frame);
             av_packet_free(packet);

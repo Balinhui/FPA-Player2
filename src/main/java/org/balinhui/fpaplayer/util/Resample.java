@@ -19,7 +19,7 @@ import static org.bytedeco.ffmpeg.global.avutil.av_samples_get_buffer_size;
 import static org.bytedeco.ffmpeg.global.swresample.*;
 
 public class Resample {
-    private static final Logger logger = LogManager.getLogger(Resample.class);
+    private static final Logger log = LogManager.getLogger(Resample.class);
     private final int dstChannels;
     private final int dstSampleFormat;
     private final int srcSampleRate, dstSampleRate;
@@ -41,8 +41,8 @@ public class Resample {
         AVChannelLayout dstLayout = new AVChannelLayout().nb_channels(dstChannels);
         swrCtx = swr_alloc();
         if (swrCtx == null) {
-            logger.fatal("SwrContext分配失败");
-            throw new RuntimeException("SwrContext分配失败");
+            log.fatal("SwrContext分配失败");
+            ErrorHandler.displayErrorMessageAndExit((Exception) null, "SwrContext分配失败", -5);
         }
         int ret = swr_alloc_set_opts2(
                 swrCtx,
@@ -51,13 +51,13 @@ public class Resample {
                 0, null
         );
         if (ret < 0) {
-            logger.fatal("设置选项失败");
-            throw new RuntimeException("设置选项失败");
+            log.fatal("设置选项失败");
+            ErrorHandler.displayErrorMessageAndExit((Exception) null, "设置选项失败", -5);
         }
         ret = swr_init(swrCtx);
         if (ret < 0) {
-            logger.fatal("SwrContext初始化失败");
-            throw new RuntimeException("SwrContext初始化失败");
+            log.fatal("SwrContext初始化失败");
+            ErrorHandler.displayErrorMessageAndExit((Exception) null, "SwrContext初始化失败", -5);
         }
         av_channel_layout_uninit(srcLayout);
         av_channel_layout_uninit(dstLayout);
@@ -70,8 +70,8 @@ public class Resample {
             maxDstSamples = dstSamples;
             ret = av_samples_alloc_array_and_samples(dstData, linSize, dstChannels, dstSamples, dstSampleFormat, 0);
             if (ret < 0) {
-                logger.fatal("初始分配内存失败");
-                throw new RuntimeException("分配内存失败");
+                log.fatal("初始分配内存失败");
+                ErrorHandler.displayErrorMessageAndExit((Exception) null, "分配内存失败", -5);
             }
         }
         dstSamples = (int) av_rescale_rnd(swr_get_delay(swrCtx, srcSampleRate) + samples, dstSampleRate, srcSampleRate, AV_ROUND_UP);
@@ -79,8 +79,8 @@ public class Resample {
             av_freep(dstData.position(0));
             ret = av_samples_alloc(dstData, linSize, dstChannels, dstSamples, dstSampleFormat, 1);
             if (ret < 0) {
-                logger.fatal("分配内存失败");
-                throw new RuntimeException("分配内存失败");
+                log.fatal("分配内存失败");
+                ErrorHandler.displayErrorMessageAndExit((Exception) null, "分配内存失败", -5);
             }
             maxDstSamples = dstSamples;
         }
@@ -101,6 +101,6 @@ public class Resample {
         swr_free(swrCtx);
         dstSamples = -1;
         maxDstSamples = -1;
-        logger.trace("释放重采样资源");
+        log.trace("释放重采样资源");
     }
 }
