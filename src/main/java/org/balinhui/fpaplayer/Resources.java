@@ -40,9 +40,10 @@ public class Resources {
             public static final String audio = "音频设置";
             public static final String lyric = "歌词设置";
             public static final String about = "关于";
+            public static final String alwaysOnTop = "窗口置顶";
             public static final String darkMode = "暗黑模式";
             public static final String effectType = "背景效果类型";
-            public static final String frameNum = "帧大小";
+            public static final String frameNum = "帧大小(0为自动决定)";
             public static final String openWasapi = "使用WAS API";
             public static final String binding = "歌词大小绑定界面";
             public static final String fontSize = "字体大小";

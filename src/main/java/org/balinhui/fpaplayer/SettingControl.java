@@ -29,6 +29,9 @@ public class SettingControl {
             FPAScreen.OperableControls.lyricsPane.bindLyrics(newValue);
         } else if (name.contains("translate")) {
             FPAScreen.OperableControls.lyricsPane.enableTranslate(newValue);
+        } else if (name.contains("alwaysOnTop")) {
+            FPAScreen.OperableControls.mainWindow.setAlwaysOnTop(newValue);
+            SettingScreen.setAlwaysOnTop(newValue);
         }
     }
 

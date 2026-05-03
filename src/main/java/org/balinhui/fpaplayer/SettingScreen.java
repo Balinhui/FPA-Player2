@@ -81,6 +81,7 @@ public class SettingScreen {
         stage.initOwner(FPAScreen.OperableControls.mainWindow);
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.setAlwaysOnTop(Config.get("app.alwaysOnTop").value().bValue);
         stage.setOnShown(event -> Platform.runLater(() -> {
             tmpHwnd = NativeAPI.getHWNDForOthers(stage.getTitle());
             if (tmpHwnd > 0 && Config.get("app.supportMica").value().bValue) {
@@ -291,5 +292,9 @@ public class SettingScreen {
             if (!hr) screen.root.setBackground(Background.fill(Color.WHITE));
             screen.texts.forEach(text -> text.setTextFill(Color.BLACK));
         }
+    }
+
+    public static void setAlwaysOnTop(boolean alwaysOnTop) {
+        screen.stage.setAlwaysOnTop(alwaysOnTop);
     }
 }

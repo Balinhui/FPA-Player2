@@ -112,6 +112,7 @@ public class FPAScreen extends Application {
         if (y != -1) stage.setY(y);
         stage.setFullScreen(Config.get("app.fullScreen").value().bValue);
         stage.setFullScreenExitHint("");
+        stage.setAlwaysOnTop(Config.get("app.alwaysOnTop").value().bValue);
         stage.widthProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     if (newValue.doubleValue() < 500 && isRightPaneVisible) {
