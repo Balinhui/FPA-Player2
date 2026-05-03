@@ -90,8 +90,8 @@ public class SettingScreen {
 
             if (!NativeAPI.setDarkModeForOthers(tmpHwnd, Config.get("app.darkMode").value().bValue)) {
                 if (Config.get("app.darkMode").value().bValue)
-                    root.setBackground(Background.fill(Color.WHITE));
-                else root.setBackground(Background.fill(Color.BLACK));
+                    root.setBackground(Background.fill(Color.BLACK));
+                else root.setBackground(Background.fill(Color.WHITE));
             }
         }));
     }
