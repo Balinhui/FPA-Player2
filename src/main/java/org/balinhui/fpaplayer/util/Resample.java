@@ -25,7 +25,6 @@ public class Resample {
     private final int srcSampleRate, dstSampleRate;
     private int maxDstSamples = -1, dstSamples = -1;
     private final PointerPointer<BytePointer> dstData;
-    private final IntPointer linSize;
     private final SwrContext swrCtx;
 
     public Resample(
@@ -36,7 +35,6 @@ public class Resample {
         this.dstSampleRate = info.sampleRate;
         this.dstSampleFormat = info.sampleFormat;
         dstData = new PointerPointer<>((Pointer) null);
-        linSize = new IntPointer();
         AVChannelLayout srcLayout = new AVChannelLayout().nb_channels(srcChannels);
         AVChannelLayout dstLayout = new AVChannelLayout().nb_channels(dstChannels);
         swrCtx = swr_alloc();
@@ -68,16 +66,22 @@ public class Resample {
         if (dstSamples == -1) {
             dstSamples = (int) av_rescale_rnd(samples, dstSampleRate, srcSampleRate, AV_ROUND_UP);
             maxDstSamples = dstSamples;
-            ret = av_samples_alloc_array_and_samples(dstData, linSize, dstChannels, dstSamples, dstSampleFormat, 0);
+            ret = av_samples_alloc_array_and_samples(
+                    dstData, (IntPointer) null,
+                    dstChannels, dstSamples, dstSampleFormat, 0
+            );
             if (ret < 0) {
                 log.fatal("初始分配内存失败");
                 ErrorHandler.displayErrorMessageAndExit((Exception) null, "分配内存失败", -5);
             }
         }
-        dstSamples = (int) av_rescale_rnd(swr_get_delay(swrCtx, srcSampleRate) + samples, dstSampleRate, srcSampleRate, AV_ROUND_UP);
+        dstSamples = (int) av_rescale_rnd(
+                swr_get_delay(swrCtx, srcSampleRate) + samples,
+                dstSampleRate, srcSampleRate, AV_ROUND_UP
+        );
         if (dstSamples > maxDstSamples) {
             av_freep(dstData.position(0));
-            ret = av_samples_alloc(dstData, linSize, dstChannels, dstSamples, dstSampleFormat, 1);
+            ret = av_samples_alloc(dstData, null, dstChannels, dstSamples, dstSampleFormat, 1);
             if (ret < 0) {
                 log.fatal("分配内存失败");
                 ErrorHandler.displayErrorMessageAndExit((Exception) null, "分配内存失败", -5);
@@ -85,7 +89,7 @@ public class Resample {
             maxDstSamples = dstSamples;
         }
         int newSamples = swr_convert(swrCtx, dstData, dstSamples, srcData, samples);
-        int bufferSize = av_samples_get_buffer_size(linSize, dstChannels, newSamples, dstSampleFormat, 1);
+        int bufferSize = av_samples_get_buffer_size((IntPointer) null, dstChannels, newSamples, dstSampleFormat, 1);
         rawData[0] = dstData.get(BytePointer.class, 0);
         rawData[0].position(0).limit(bufferSize);
         return newSamples;
@@ -96,7 +100,6 @@ public class Resample {
             av_freep(dstData.position(0));
             av_freep(dstData);
         }
-        linSize.deallocate();
         dstData.deallocate();
         swr_free(swrCtx);
         dstSamples = -1;
