@@ -22,7 +22,7 @@ public class SettingControl {
         } else if (name.contains("openWasapi")) {
             NativeAPI.displayMessage(
                     "提示",
-                    "需要重启才能生效",
+                    "下次播放时生效",
                     MessageFlags.Buttons.OK | MessageFlags.Icons.INFORMATION
             );
         } else if (name.contains("binding")) {
@@ -49,7 +49,7 @@ public class SettingControl {
             if (newValue.equals("trans")) effect = Win32.Effects.TRANS;
             else if (newValue.equals("tabbed")) effect = Win32.Effects.TABBED;
             NativeAPI.applyWindowsEffect(effect);
-        } else if (name.equals("position")) {
+        } else if (name.contains("position")) {
             FPAScreen.OperableControls.lyricsPane.changePosition(newValue);
         }
     }
