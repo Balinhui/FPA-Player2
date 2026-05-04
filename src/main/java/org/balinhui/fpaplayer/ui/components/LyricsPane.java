@@ -13,10 +13,7 @@ import javafx.util.Duration;
 import org.balinhui.fpaplayer.FPAScreen;
 import org.balinhui.fpaplayer.util.ErrorHandler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class LyricsPane extends ScrollPane {
     private final VBox lyricsContainer;

@@ -21,6 +21,7 @@ public class LyricLine extends VBox {
     private final long time;
     private final List<Label> labels = new ArrayList<>();
     private boolean highlight = false;
+    private boolean darkMode;
     private final GaussianBlur blur = new GaussianBlur();
 
     private static final Paint GRAY_WHITE = Color.rgb(190, 190, 190);
@@ -42,9 +43,10 @@ public class LyricLine extends VBox {
         setPadding(new Insets(0, 36, 0, 0));
         blur.setRadius(BLUE_RADIUS);
         setEffect(blur);
+        darkMode = Config.get("app.darkMode").value().bValue;
         if (!isFake) {
             setOnMouseEntered(mouseEvent -> {
-                if (Config.get("app.darkMode").value().bValue)
+                if (darkMode)
                     setBackground(Background.fill(Color.rgb(55, 55, 55, 0.2)));
                 else setBackground(Background.fill(Color.rgb(155, 155, 155, 0.2)));
             });
@@ -67,7 +69,7 @@ public class LyricLine extends VBox {
             else if (position.equals("right")) l.setTextAlignment(TextAlignment.RIGHT);
             else l.setTextAlignment(TextAlignment.CENTER);
 
-            if (Config.get("app.darkMode").value().bValue) l.setTextFill(GRAY_WHITE);
+            if (darkMode) l.setTextFill(GRAY_WHITE);
             else l.setTextFill(GRAY_DARK);
 
             //通过配置文件设置是否绑定布局容器
@@ -107,6 +109,7 @@ public class LyricLine extends VBox {
     }
 
     public void setDarkMode(boolean darkMode) {
+        this.darkMode = darkMode;
         if (darkMode) {
             labels.forEach(label -> {
                 if (highlight) label.setTextFill(Color.WHITE);
@@ -126,14 +129,14 @@ public class LyricLine extends VBox {
         if (highlight) {
             this.blur.setRadius(0.0);
             this.labels.forEach(label -> {
-                if (Config.get("app.darkMode").value().bValue)
+                if (darkMode)
                     label.setTextFill(Color.WHITE);
                 else label.setTextFill(Color.BLACK);
             });
         } else {
             this.blur.setRadius(BLUE_RADIUS);
             this.labels.forEach(label -> {
-                if (Config.get("app.darkMode").value().bValue)
+                if (darkMode)
                     label.setTextFill(GRAY_WHITE);
                 else label.setTextFill(GRAY_DARK);
             });
