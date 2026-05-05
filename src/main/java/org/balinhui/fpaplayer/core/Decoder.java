@@ -25,8 +25,7 @@ import org.bytedeco.javacpp.PointerPointer;
 import org.bytedeco.javacpp.ShortPointer;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.bytedeco.ffmpeg.global.avcodec.*;
 import static org.bytedeco.ffmpeg.global.avformat.*;
@@ -143,31 +142,72 @@ public class Decoder implements Runnable {
     }
 
     /**
-     * 读取歌曲元数据
+     * 读取歌曲元数据，并选择更优的元数据
      * @param fmtCtx ffmpeg读取好的音频内容
      * @param stream ffmpeg读取好的音频流
      * @return 包含元数据的键值对
      */
     private Map<String, String> getMetadata(AVFormatContext fmtCtx, AVStream stream) {
-        Map<String, String> metadata = new HashMap<>();
+        Map<String, List<String>> metadata = new HashMap<>();
         addMetadataToMap(fmtCtx.metadata(), metadata);
         if (stream.metadata() != null) {
             addMetadataToMap(stream.metadata(), metadata);
         }
 
-        return metadata;
+        Map<String, String> result = new HashMap<>();
+        for (Map.Entry<String, List<String>> e : metadata.entrySet()) {
+            String best = e.getValue().stream()
+                    .max(Comparator.comparingInt(this::scoreMetadata))
+                    .orElse(null);
+
+            if (best != null) {
+                result.put(e.getKey(), best);
+            } else {
+                result.put(e.getKey(), e.getValue().getFirst());
+            }
+        }
+
+        return result;
     }
 
-    private void addMetadataToMap(AVDictionary dict, Map<String, String> target) {
+    private void addMetadataToMap(AVDictionary dict, Map<String, List<String>> target) {
         AVDictionaryEntry entry = null;
         while ((entry = av_dict_get(dict, "", entry, AV_DICT_IGNORE_SUFFIX)) != null) {
             String key = entry.key().getString();
             String value = entry.value().getString();
 
             if (key != null && value != null) {
-                target.put(key, value);
+                target.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
             }
         }
+    }
+
+    private int scoreMetadata(String s) {
+        if (s == null || s.isBlank()) return Integer.MIN_VALUE;
+
+        int score = 0;
+        if (s.contains("\uFFFD")) score -= 100;
+
+        for (char c : s.toCharArray()) {
+            if (
+                    Character.isLetterOrDigit(c)
+                    || Character.isWhitespace(c)
+                    || Character.isIdeographic(c)
+                    || Character.isAlphabetic(c)
+            ) {
+                score += 2;
+            }
+        }
+
+        for (char c : s.toCharArray()) {
+            if (Character.isISOControl(c)) {
+                score -= 2;
+            }
+        }
+
+        log.trace("{} 得分情况: {}", s, score);
+
+        return score;
     }
 
     public void start(OutputInfo outputInfo, Event onDecodeFinish) {
