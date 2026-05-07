@@ -26,9 +26,10 @@ public class LyricLine extends VBox {
 
     private static final Paint GRAY_WHITE = Color.rgb(190, 190, 190);
     private static final Paint GRAY_DARK = Color.rgb(65, 65, 65);
-    private final double BLUE_RADIUS = 3.0;
-    private final double RATE = 0.06;
-    private final double MAX_FONT_SIZE = 40;
+    private static final double BLUR_RADIUS = 3.0;
+    private static final double RATE = 0.06;
+    private static final double MAX_FONT_SIZE = 40;
+    private static final double MIN_FONT_SIZE = 20;
 
     /**
      * 创建一行歌词
@@ -41,7 +42,7 @@ public class LyricLine extends VBox {
         else if (position.equals("right")) setAlignment(Pos.CENTER_RIGHT);
         else setAlignment(Pos.CENTER);
         setPadding(new Insets(0, 36, 0, 0));
-        blur.setRadius(BLUE_RADIUS);
+        blur.setRadius(BLUR_RADIUS);
         setEffect(blur);
         darkMode = Config.get("app.darkMode").value().bValue;
         if (!isFake) {
@@ -82,7 +83,7 @@ public class LyricLine extends VBox {
                         widthProperty()));
             } else {
                 double size = Config.get("lyric.fontSize").value().dValue;
-                size = Math.min(size, MAX_FONT_SIZE);
+                size = Math.clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
 
                 if (i == 0) l.setFont(Font.font(null, FontWeight.MEDIUM, size));
                 else l.setFont(Font.font(null, FontWeight.LIGHT, size - 5));
@@ -134,7 +135,7 @@ public class LyricLine extends VBox {
                 else label.setTextFill(Color.BLACK);
             });
         } else {
-            this.blur.setRadius(BLUE_RADIUS);
+            this.blur.setRadius(BLUR_RADIUS);
             this.labels.forEach(label -> {
                 if (darkMode)
                     label.setTextFill(GRAY_WHITE);
@@ -168,7 +169,7 @@ public class LyricLine extends VBox {
             } else {
                 labels.get(i).fontProperty().unbind();
                 double size = Config.get("lyric.fontSize").value().dValue;
-                size = Math.min(size, MAX_FONT_SIZE);
+                size = Math.clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
 
                 if (i == 0) labels.get(i).setFont(Font.font(null, FontWeight.MEDIUM, size));
                 else labels.get(i).setFont(Font.font(null, FontWeight.LIGHT, size - 5));
@@ -179,7 +180,7 @@ public class LyricLine extends VBox {
     public void setLyricFontSize(double size) {
         if (labels.getFirst().fontProperty().isBound()) return;
         for (int i = 0; i < labels.size(); i++) {
-            size = Math.min(size, MAX_FONT_SIZE);
+            size = Math.clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
 
             if (i == 0) labels.get(i).setFont(Font.font(null, FontWeight.MEDIUM, size));
             else labels.get(i).setFont(Font.font(null, FontWeight.LIGHT, size - 5));

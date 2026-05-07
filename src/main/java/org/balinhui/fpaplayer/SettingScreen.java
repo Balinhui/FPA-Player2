@@ -218,7 +218,7 @@ public class SettingScreen {
                     if (item.equals("frameNum"))
                         choiceBox.getItems().addAll(0, 128, 256, 512, 1024, 2048, 4096);
                     else if (item.equals("fontSize"))
-                        choiceBox.getItems().addAll(10, 20, 30, 40, 50);
+                        choiceBox.getItems().addAll(20, 25, 30, 35, 40);
                     choiceBox.setValue((int) preference.value().dValue);
                     choiceBox.getSelectionModel().selectedItemProperty().addListener(
                             (obs, oldV, newV) -> {
