@@ -12,7 +12,7 @@ public class Lyrics {
     private static final Pattern lyricsPattern = Pattern.compile("lyrics", Pattern.CASE_INSENSITIVE);
     private static final Pattern titlePattern = Pattern.compile("title", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern timePattern = Pattern.compile("\\[(\\d{2}:\\d{2}\\.\\d{2,3})]");
+    private static final Pattern timePattern = Pattern.compile("\\[(\\d{1,2}:\\d{2}\\.\\d{2,3})]");
 
     private Lyrics() {}
 
@@ -21,6 +21,7 @@ public class Lyrics {
         for (String s : metadata.keySet()) {
             Matcher matcher = lyricsPattern.matcher(s);
             if (matcher.find()) {
+                if (s.contains("XX")) continue;//不接受逐字歌词
                 lyrics = metadata.get(s);
                 break;
             }
