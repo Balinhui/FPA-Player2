@@ -127,6 +127,14 @@ public final class LyricsPane extends ScrollPane {
         double targetScrollTop = nodeTop - (viewportHeight - nodeHeight) / 2;
 
         double maxScroll = containerHeight - viewportHeight;
+
+        //如果是歌词更新，在判断是否需要滚动前将歌词高亮，以防因为不需滚动而无法高亮歌词
+        //不是歌词更新，就忽略掉
+        if (!realLyrics.isEmpty() && !isChangePosition) {
+            realLyrics.forEach(lyricLine -> lyricLine.setHighlight(false));
+            realLyrics.get(lineIndex).setHighlight(true);
+        }
+
         if (maxScroll <= 0) return;
 
         targetScrollTop = Math.clamp(targetScrollTop, 0, maxScroll);
@@ -141,10 +149,6 @@ public final class LyricsPane extends ScrollPane {
         );
 
         scrollTimeLine.play();
-        if (!realLyrics.isEmpty()) {
-            realLyrics.forEach(lyricLine -> lyricLine.setHighlight(false));
-            realLyrics.get(lineIndex).setHighlight(true);
-        }
     }
 
     public void scrollToTime(long time) {
