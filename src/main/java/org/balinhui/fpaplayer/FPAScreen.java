@@ -30,6 +30,7 @@ import org.balinhui.fpaplayer.util.Config;
 import org.balinhui.fpaplayer.util.ErrorHandler;
 
 import java.awt.*;
+import java.net.URL;
 
 public class FPAScreen extends Application {
 
@@ -86,7 +87,11 @@ public class FPAScreen extends Application {
 
         ProgressBar progressBar = new ProgressBar();
         OperableControls.progressBar = progressBar;
-        progressBar.setPrefHeight(9);
+        progressBar.setStyle(
+                "progress-color: #FFFFFF;" +
+                "track-color: #B8B8B8;"
+        );
+        progressBar.setPrefHeight(5);
         progressBar.prefWidthProperty().bind(bar.widthProperty());
 
         BorderPane bottom = createBottom();
@@ -99,6 +104,11 @@ public class FPAScreen extends Application {
         double width = Config.get("app.width").value().dValue;
         double height = Config.get("app.height").value().dValue;
         Scene scene = new Scene(root, width == -1 ? 600 : width, height == -1 ? 400 : height);
+        //加载css中的外观
+        URL url = getClass().getResource("/fpa-style.css");
+        if (url != null)
+            scene.getStylesheets().add(url.toExternalForm());
+
         if (SystemInfo.systemName == SystemInfo.Name.WINDOWS && Config.get("app.supportMica").value().bValue) {
             stage.initStyle(StageStyle.UNIFIED);
             scene.setFill(Color.TRANSPARENT);
@@ -396,7 +406,6 @@ public class FPAScreen extends Application {
 
     private LyricsPane createLyricsPane(Pane parent) {
         LyricsPane lyricsPane = new LyricsPane();
-        lyricsPane.setBackground(Background.fill(Color.TRANSPARENT));
         lyricsPane.prefWidthProperty().bind(parent.widthProperty());
         lyricsPane.prefHeightProperty().bind(Bindings.createDoubleBinding(
                 () -> parent.getHeight() * 0.6,

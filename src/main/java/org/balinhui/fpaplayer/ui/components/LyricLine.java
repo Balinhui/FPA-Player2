@@ -17,7 +17,7 @@ import org.balinhui.fpaplayer.util.Config;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LyricLine extends VBox {
+public final class LyricLine extends VBox {
     private final long time;
     private final List<Label> labels = new ArrayList<>();
     private boolean highlight = false;

@@ -1,0 +1,57 @@
+.progress-bar {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.progress-bar .track {
+    -fx-background-color: track-color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 999px;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.progress-bar .bar {
+    -fx-background-color: progress-color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 999px;
+    -fx-padding: 0;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 10;
+}
+
+.scroll-bar:vertical .track {
+    -fx-background-color: scroll-track-color;
+    -fx-background-radius: 999px;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: scroll-thumb-color;
+    -fx-background-radius: 999px;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}

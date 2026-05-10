@@ -10,7 +10,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class PSliderToggle extends ToggleButton {
+public final class PSliderToggle extends ToggleButton {
     private final PSliderToggleSkin skin;
 
     public PSliderToggle() {

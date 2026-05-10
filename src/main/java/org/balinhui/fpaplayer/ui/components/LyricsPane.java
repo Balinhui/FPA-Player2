@@ -5,17 +5,19 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.balinhui.fpaplayer.FPAScreen;
+import org.balinhui.fpaplayer.util.Config;
 import org.balinhui.fpaplayer.util.ErrorHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class LyricsPane extends ScrollPane {
+public final class LyricsPane extends ScrollPane {
     private final VBox lyricsContainer;
     private final List<LyricLine> realLyrics = new ArrayList<>();
     private Timeline scrollTimeLine;
@@ -26,16 +28,17 @@ public class LyricsPane extends ScrollPane {
         this.lyricsContainer = new VBox(15);
         lyricsContainer.prefWidthProperty().bind(prefWidthProperty());
         setContent(lyricsContainer);
-        layoutBoundsProperty().addListener((obs, old, bounds) -> {
-            if (getViewportBounds() != null) {
-                lookupAll(".viewport").forEach(node -> {
-                    node.setStyle("-fx-background-color: transparent;");
-                    if (node instanceof Region region) {
-                        region.setBackground(Background.EMPTY);
-                    }
-                });
-            }
-        });
+        if (Config.get("app.darkMode").value().bValue) {
+            setStyle(
+                    "scroll-thumb-color: #B8B8B8;" +
+                    "scroll-track-color: #6A6A6A;"
+            );
+        } else {
+            setStyle(
+                    "scroll-thumb-color: #6A6A6A;" +
+                    "scroll-track-color: #B8B8B8;"
+            );
+        }
         setBorder(Border.EMPTY);
         setVbarPolicy(ScrollBarPolicy.NEVER);
         setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -78,6 +81,17 @@ public class LyricsPane extends ScrollPane {
     }
 
     public void setDarkMode(boolean darkMode) {
+        if (darkMode) {
+            setStyle(
+                    "scroll-thumb-color: #B8B8B8;" +
+                    "scroll-track-color: #6A6A6A;"
+            );
+        } else {
+            setStyle(
+                    "scroll-thumb-color: #6A6A6A;" +
+                    "scroll-track-color: #B8B8B8;"
+            );
+        }
         if (realLyrics.isEmpty()) return;
         realLyrics.forEach(lyricLine -> lyricLine.setDarkMode(darkMode));
     }

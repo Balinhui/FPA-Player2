@@ -8,7 +8,7 @@ import javafx.scene.layout.HBox;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PMenuBar extends HBox {
+public final class PMenuBar extends HBox {
     private final Map<String, PButton> buttonMap = new HashMap<>();
     public PMenuBar() {
         setAlignment(Pos.CENTER);

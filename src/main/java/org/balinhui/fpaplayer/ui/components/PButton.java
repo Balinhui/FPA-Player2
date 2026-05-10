@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 
 import java.util.List;
 
-public class PButton extends Button {
+public final class PButton extends Button {
     private List<String> lightColors;
     private List<String> darkColors;
     private Image lightImage;
