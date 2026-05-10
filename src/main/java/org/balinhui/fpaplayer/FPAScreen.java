@@ -87,10 +87,7 @@ public class FPAScreen extends Application {
 
         ProgressBar progressBar = new ProgressBar();
         OperableControls.progressBar = progressBar;
-        progressBar.setStyle(
-                "progress-color: #FFFFFF;" +
-                "track-color: #B8B8B8;"
-        );
+        progressBar.setStyle("progress-color: white;");
         progressBar.setPrefHeight(5);
         progressBar.prefWidthProperty().bind(bar.widthProperty());
 

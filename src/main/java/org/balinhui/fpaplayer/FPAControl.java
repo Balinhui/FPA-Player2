@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.paint.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.balinhui.fpaplayer.core.CurrentStatus;
@@ -21,6 +22,7 @@ import org.balinhui.fpaplayer.ui.UIPlayer;
 import org.balinhui.fpaplayer.util.Config;
 import org.balinhui.fpaplayer.util.Lyrics;
 import org.balinhui.fpaplayer.util.NativeLibraryLoader;
+import org.balinhui.fpaplayer.util.ThemeColorExtractor;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -236,8 +238,21 @@ public class FPAControl {
                 Platform.runLater(() -> {
                     FPAScreen.OperableControls.lyricsPane.release();
                     FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
-                    if (song.cover != null)
-                        FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
+                    if (song.cover != null) {
+                        Image iCover = new Image(new ByteArrayInputStream(song.cover));
+                        FPAScreen.OperableControls.cover.setImage(iCover);
+                        Color color = ThemeColorExtractor.extractDominantColor(iCover);
+                        log.trace("提取下一个封面颜色: Red: {}, Green: {}, Blue: {}",
+                                color.getRed(), color.getGreen(), color.getBlue());
+                        FPAScreen.OperableControls.progressBar.setStyle(
+                                String.format(
+                                        "progress-color: rgb(%d, %d, %d);",
+                                        (int) (color.getRed() * 255),
+                                        (int) (color.getGreen() * 255),
+                                        (int) (color.getBlue() * 255)
+                                )
+                        );
+                    }
                     FPAScreen.setPauseButton(true);
                     FPAScreen.showTitle(Lyrics.findTitle(song.metadata));
                 });
@@ -258,8 +273,21 @@ public class FPAControl {
         //更新UI
         FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
         FPAScreen.setDisplayLyrics(true);
-        if (song.cover != null)
-            FPAScreen.OperableControls.cover.setImage(new Image(new ByteArrayInputStream(song.cover)));
+        if (song.cover != null) {
+            Image iCover = new Image(new ByteArrayInputStream(song.cover));
+            FPAScreen.OperableControls.cover.setImage(iCover);
+            Color color = ThemeColorExtractor.extractDominantColor(iCover);
+            log.trace("提取封面颜色: Red: {}, Green: {}, Blue: {}",
+                    color.getRed(), color.getGreen(), color.getBlue());
+            FPAScreen.OperableControls.progressBar.setStyle(
+                    String.format(
+                            "progress-color: rgb(%d, %d, %d);",
+                            (int) (color.getRed() * 255),
+                            (int) (color.getGreen() * 255),
+                            (int) (color.getBlue() * 255)
+                    )
+            );
+        }
         FPAScreen.setPauseButton(true);
         FPAScreen.showTitle(Lyrics.findTitle(song.metadata));
 
@@ -278,6 +306,7 @@ public class FPAControl {
             Platform.runLater(() -> {
                 FPAScreen.setDisplayLyrics(false);
                 FPAScreen.OperableControls.cover.setImage(Resources.ImageRes.cover);
+                FPAScreen.OperableControls.progressBar.setStyle("progress-color: white;");
                 FPAScreen.OperableControls.progressBar.setProgress(-1);
                 FPAScreen.setPauseButton(false);
                 FPAScreen.hideTitle();
