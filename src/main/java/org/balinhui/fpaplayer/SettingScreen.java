@@ -193,9 +193,14 @@ public class SettingScreen {
                                     "-fx-padding: 1;" +
                                     "-fx-font-size: 10px;"
                     );
-                    if (item.equals("effectType"))
-                        choiceBox.getItems().addAll("mica", "trans", "tabbed");
-                    else if (item.equals("position"))
+                    if (item.equals("effectType")) {
+                        if (!Config.get("app.supportMica").value().bValue) {
+                            choiceBox.getItems().add("none");
+                            choiceBox.setDisable(true);
+                        } else {
+                            choiceBox.getItems().addAll("mica", "trans", "tabbed");
+                        }
+                    } else if (item.equals("position"))
                         choiceBox.getItems().addAll("left", "center", "right");
                     choiceBox.setValue(preference.value().sValue);
                     choiceBox.getSelectionModel().selectedItemProperty().addListener(
