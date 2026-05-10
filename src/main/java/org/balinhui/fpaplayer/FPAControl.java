@@ -242,7 +242,7 @@ public class FPAControl {
                         Image iCover = new Image(new ByteArrayInputStream(song.cover));
                         FPAScreen.OperableControls.cover.setImage(iCover);
                         Color color = ThemeColorExtractor.extractDominantColor(iCover);
-                        log.trace("提取下一个封面颜色: Red: {}, Green: {}, Blue: {}",
+                        log.trace("提取下一个封面颜色{R: {},G: {},B: {}}",
                                 color.getRed(), color.getGreen(), color.getBlue());
                         FPAScreen.OperableControls.progressBar.setStyle(
                                 String.format(
@@ -277,7 +277,7 @@ public class FPAControl {
             Image iCover = new Image(new ByteArrayInputStream(song.cover));
             FPAScreen.OperableControls.cover.setImage(iCover);
             Color color = ThemeColorExtractor.extractDominantColor(iCover);
-            log.trace("提取封面颜色: Red: {}, Green: {}, Blue: {}",
+            log.trace("提取封面颜色{R: {},G: {},B: {}}",
                     color.getRed(), color.getGreen(), color.getBlue());
             FPAScreen.OperableControls.progressBar.setStyle(
                     String.format(
