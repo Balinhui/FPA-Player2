@@ -14,7 +14,7 @@
 
 .progress-bar .bar {
     -fx-background-color: progress-color;
-    -fx-background-insets: 0;
+    -fx-background-insets: 0.5;
     -fx-background-radius: 999px;
     -fx-padding: 0;
 }
@@ -54,4 +54,44 @@
 .scroll-bar .decrement-arrow {
     -fx-shape: "";
     -fx-padding: 0;
+}
+
+
+.choice-box {
+    -fx-background-color: choice-box-background-color;
+    -fx-border-color: choice-box-border-color;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.choice-box > .label {
+    -fx-text-fill: choice-box-text-fill;
+}
+
+.choice-box .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.context-menu {
+    -fx-background-color: choice-box-background-color;
+    -fx-border-color: choice-box-border-color;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.menu-item {
+    -fx-background-color: choice-box-background-color;
+    -fx-padding: 6 6 6 6;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: choice-box-text-fill;
+}
+
+.context-menu .menu-item:focused {
+    -fx-background-color: choice-box-focused-color;
+}
+
+.context-menu .radio-menu-item:checked .radio {
+    -fx-background-color: choice-box-icon-color;
 }

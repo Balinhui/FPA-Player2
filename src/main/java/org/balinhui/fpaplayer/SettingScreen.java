@@ -24,6 +24,7 @@ import org.balinhui.fpaplayer.ui.components.PMenuBar;
 import org.balinhui.fpaplayer.ui.components.PSliderToggle;
 import org.balinhui.fpaplayer.util.Config;
 
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ public class SettingScreen {
     private final Map<String, Node> scenes = new LinkedHashMap<>();
     private final List<Label> texts = new ArrayList<>();
     private final List<PSliderToggle> toggles = new ArrayList<>();
+    private final List<ChoiceBox<?>> choiceBoxes = new ArrayList<>();
     private final SettingControl control;
 
     private final Class<Resources.StringRes.SettingStringRes> settingStringResClass;
@@ -63,6 +65,9 @@ public class SettingScreen {
 
 
         Scene scene = new Scene(root, 350, 250);
+        URL url = getClass().getResource("/fpa-style.css");
+        if (url != null)
+            scene.getStylesheets().add(url.toExternalForm());
 
         if (SystemInfo.systemName == SystemInfo.Name.WINDOWS && Config.get("app.supportMica").value().bValue) {
             stage.initStyle(StageStyle.UNIFIED);
@@ -185,14 +190,24 @@ public class SettingScreen {
                 }
                 case STR -> {
                     ChoiceBox<String> choiceBox = new ChoiceBox<>();
-                    choiceBox.setStyle(
-                            "-fx-background-color: white;" +
-                                    "-fx-background-radius: 5;" +
-                                    "-fx-border-color: #ddd;" +
-                                    "-fx-border-radius: 5;" +
-                                    "-fx-padding: 1;" +
-                                    "-fx-font-size: 10px;"
-                    );
+                    choiceBoxes.add(choiceBox);
+                    if (Config.get("app.darkMode").value().bValue) {
+                        choiceBox.setStyle(
+                                "choice-box-background-color: #343536;" +
+                                        "choice-box-border-color: #454545;" +
+                                        "choice-box-text-fill: white;" +
+                                        "choice-box-focused-color: #3b3b3c;" +
+                                        "choice-box-icon-color: #4cc2ff;"
+                        );
+                    } else {
+                        choiceBox.setStyle(
+                                "choice-box-background-color: white;" +
+                                        "choice-box-border-color: #dddddd;" +
+                                        "choice-box-text-fill: black;" +
+                                        "choice-box-focused-color: #f2f1ef;" +
+                                        "choice-box-icon-color: #0067c0;"
+                        );
+                    }
                     if (item.equals("effectType")) {
                         if (!Config.get("app.supportMica").value().bValue) {
                             choiceBox.getItems().add("none");
@@ -212,14 +227,24 @@ public class SettingScreen {
                 }
                 case DOUBLE -> {
                     ChoiceBox<Integer> choiceBox = new ChoiceBox<>();
-                    choiceBox.setStyle(
-                            "-fx-background-color: white;" +
-                                    "-fx-background-radius: 5;" +
-                                    "-fx-border-color: #ddd;" +
-                                    "-fx-border-radius: 5;" +
-                                    "-fx-padding: 1;" +
-                                    "-fx-font-size: 10px;"
-                    );
+                    choiceBoxes.add(choiceBox);
+                    if (Config.get("app.darkMode").value().bValue) {
+                        choiceBox.setStyle(
+                                "choice-box-background-color: #343536;" +
+                                        "choice-box-border-color: #454545;" +
+                                        "choice-box-text-fill: white;" +
+                                        "choice-box-focused-color: #3b3b3c;" +
+                                        "choice-box-icon-color: #4cc2ff;"
+                        );
+                    } else {
+                        choiceBox.setStyle(
+                                "choice-box-background-color: white;" +
+                                        "choice-box-border-color: #dddddd;" +
+                                        "choice-box-text-fill: black;" +
+                                        "choice-box-focused-color: #f2f1ef;" +
+                                        "choice-box-icon-color: #0067c0;"
+                        );
+                    }
                     if (item.equals("frameNum"))
                         choiceBox.getItems().addAll(0, 128, 256, 512, 1024, 2048, 4096);
                     else if (item.equals("fontSize"))
@@ -293,9 +318,23 @@ public class SettingScreen {
         if (darkMode) {
             if (!hr) screen.root.setBackground(Background.fill(Color.BLACK));
             screen.texts.forEach(text -> text.setTextFill(Color.WHITE));
+            screen.choiceBoxes.forEach(choiceBox -> choiceBox.setStyle(
+                    "choice-box-background-color: #343536;" +
+                            "choice-box-border-color: #454545;" +
+                            "choice-box-text-fill: white;" +
+                            "choice-box-focused-color: #3b3b3c;" +
+                            "choice-box-icon-color: #4cc2ff;"
+            ));
         } else {
             if (!hr) screen.root.setBackground(Background.fill(Color.WHITE));
             screen.texts.forEach(text -> text.setTextFill(Color.BLACK));
+            screen.choiceBoxes.forEach(choiceBox -> choiceBox.setStyle(
+                    "choice-box-background-color: white;" +
+                            "choice-box-border-color: #dddddd;" +
+                            "choice-box-text-fill: black;" +
+                            "choice-box-focused-color: #f2f1ef;" +
+                            "choice-box-icon-color: #0067c0;"
+            ));
         }
     }
 
