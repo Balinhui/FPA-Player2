@@ -226,11 +226,10 @@ public class FPAScreen extends Application {
         choose = new PButton(Resources.StringRes.choose_file);
         choose.setDarkMode(Config.get("app.darkMode").value().bValue);
         choose.setFont(new Font(15));
+        double chooseButtonMinWidth = 130, chooseButtonMaxWidth = 200;
         choose.prefWidthProperty().bind(Bindings.createDoubleBinding(() -> {
             double calculatedWidth = rightPane.getWidth() * 0.4;
-            double minWidth = 130;
-            double maxWidth = 200;
-            return Math.clamp(calculatedWidth, minWidth, maxWidth);
+            return Math.clamp(calculatedWidth, chooseButtonMinWidth, chooseButtonMaxWidth);
         }, rightPane.widthProperty()));
         choose.setPrefHeight(45);
         choose.setOnAction(event -> control.onChooseFile());
@@ -308,12 +307,11 @@ public class FPAScreen extends Application {
         HBox buttonBar = new HBox(10);
         //buttonBar.setStyle("-fx-background-color:purple");
         buttonBar.prefHeightProperty().bind(parent.heightProperty());
+        double buttonBarMinWidth = 130;
         buttonBar.prefWidthProperty().bind(Bindings.createDoubleBinding(
                 () -> {
                     double width = parent.getWidth() * 0.2;
-                    double minWidth = 130;
-                    double maxWidth = parent.getWidth() / 2 < minWidth ? minWidth + 1 : parent.getWidth() / 2;
-                    return Math.clamp(width, minWidth, maxWidth);
+                    return Math.max(width, buttonBarMinWidth);
                 },
                 parent.widthProperty()
         ));
@@ -341,12 +339,11 @@ public class FPAScreen extends Application {
         HBox buttonBar = new HBox(10);
         //buttonBar.setStyle("-fx-background-color:gray");
         buttonBar.prefHeightProperty().bind(parent.heightProperty());
+        double buttonBarMinWidth = 130;
         buttonBar.prefWidthProperty().bind(Bindings.createDoubleBinding(
                 () -> {
                     double width = parent.getWidth() * 0.2;
-                    double minWidth = 130;
-                    double maxWidth = parent.getWidth() * 0.5 < minWidth ? minWidth + 1 : parent.getWidth() * 0.5;
-                    return Math.clamp(width, minWidth, maxWidth);
+                    return Math.max(width, buttonBarMinWidth);
                 },
                 parent.widthProperty()
         ));
@@ -377,11 +374,11 @@ public class FPAScreen extends Application {
     }
 
     private void createBindingForBottomButtons(PButton button, Pane parent) {
+        double buttonMinWidth = 100;
         button.prefWidthProperty().bind(Bindings.createDoubleBinding(
                 () -> {
                     double width = parent.getWidth() * 0.3;
-                    double minWidth = 100;
-                    return Math.max(minWidth, width);
+                    return Math.max(buttonMinWidth, width);
                 },
                 parent.widthProperty()
         ));

@@ -156,21 +156,22 @@ public final class LyricLine extends VBox {
 
     public void setBinding(boolean binding) {
         if (labels.getFirst().fontProperty().isBound() == binding) return;
-        for (int i = 0; i < labels.size(); i++) {
-            if (binding) {
+        if (binding) {
+            for (int i = 0; i < labels.size(); i++) {
                 labels.get(i).setFont(null);
 
                 if (i == 0) labels.get(i).fontProperty().bind(Bindings.createObjectBinding(() ->
-                        Font.font(null, FontWeight.MEDIUM, Math.min(MAX_FONT_SIZE, getWidth() * RATE)),
+                                Font.font(null, FontWeight.MEDIUM, Math.min(MAX_FONT_SIZE, getWidth() * RATE)),
                         widthProperty()));
                 else labels.get(i).fontProperty().bind(Bindings.createObjectBinding(() ->
-                        Font.font(null, FontWeight.LIGHT, Math.min(MAX_FONT_SIZE - 5, getWidth() * RATE - 5)),
+                                Font.font(null, FontWeight.LIGHT, Math.min(MAX_FONT_SIZE - 5, getWidth() * RATE - 5)),
                         widthProperty()));
-            } else {
+            }
+        } else {
+            double size = Config.get("lyric.fontSize").value().dValue;
+            size = Math.clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
+            for (int i = 0; i < labels.size(); i++) {
                 labels.get(i).fontProperty().unbind();
-                double size = Config.get("lyric.fontSize").value().dValue;
-                size = Math.clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
-
                 if (i == 0) labels.get(i).setFont(Font.font(null, FontWeight.MEDIUM, size));
                 else labels.get(i).setFont(Font.font(null, FontWeight.LIGHT, size - 5));
             }
@@ -179,9 +180,8 @@ public final class LyricLine extends VBox {
 
     public void setLyricFontSize(double size) {
         if (labels.getFirst().fontProperty().isBound()) return;
+        size = Math.clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
         for (int i = 0; i < labels.size(); i++) {
-            size = Math.clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
-
             if (i == 0) labels.get(i).setFont(Font.font(null, FontWeight.MEDIUM, size));
             else labels.get(i).setFont(Font.font(null, FontWeight.LIGHT, size - 5));
         }
