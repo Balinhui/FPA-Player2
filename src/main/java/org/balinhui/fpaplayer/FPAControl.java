@@ -20,7 +20,6 @@ import org.balinhui.fpaplayer.info.SystemInfo;
 import org.balinhui.fpaplayer.nativeapis.MessageFlags;
 import org.balinhui.fpaplayer.nativeapis.NativeAPI;
 import org.balinhui.fpaplayer.ui.UIPlayer;
-import org.balinhui.fpaplayer.ui.components.PBackground;
 import org.balinhui.fpaplayer.util.Config;
 import org.balinhui.fpaplayer.util.Lyrics;
 import org.balinhui.fpaplayer.util.NativeLibraryLoader;
@@ -242,18 +241,6 @@ public class FPAControl {
                     FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
                     if (song.cover != null) {
                         Image iCover = new Image(new ByteArrayInputStream(song.cover));
-                        /*FPAScreen.OperableControls.cover.setImage(iCover);
-                        Color color = ThemeColorExtractor.extractDominantColor(iCover);
-                        log.trace("提取下一个封面颜色{R: {},G: {},B: {}}",
-                                color.getRed(), color.getGreen(), color.getBlue());
-                        FPAScreen.OperableControls.progressBar.setStyle(
-                                String.format(
-                                        "progress-color: rgb(%d, %d, %d);",
-                                        (int) (color.getRed() * 255),
-                                        (int) (color.getGreen() * 255),
-                                        (int) (color.getBlue() * 255)
-                                )
-                        );*/
                         updateCoverAndBackground(iCover);
                     }
                     FPAScreen.setPauseButton(true);
@@ -278,18 +265,6 @@ public class FPAControl {
         FPAScreen.setDisplayLyrics(true);
         if (song.cover != null) {
             Image iCover = new Image(new ByteArrayInputStream(song.cover));
-            /*FPAScreen.OperableControls.cover.setImage(iCover);
-            Color color = ThemeColorExtractor.extractDominantColor(iCover);
-            log.trace("提取封面颜色{R: {},G: {},B: {}}",
-                    color.getRed(), color.getGreen(), color.getBlue());
-            FPAScreen.OperableControls.progressBar.setStyle(
-                    String.format(
-                            "progress-color: rgb(%d, %d, %d);",
-                            (int) (color.getRed() * 255),
-                            (int) (color.getGreen() * 255),
-                            (int) (color.getBlue() * 255)
-                    )
-            );*/
             updateCoverAndBackground(iCover);
         }
         FPAScreen.setPauseButton(true);
@@ -306,8 +281,7 @@ public class FPAControl {
 
     private void updateCoverAndBackground(Image iCover) {
         FPAScreen.OperableControls.cover.setImage(iCover);
-        List<Color> colors = ThemeColorExtractor.extractPalette(iCover, 5);
-        Color progressColor = colors.getFirst();
+        Color progressColor = ThemeColorExtractor.extractDominantColor(iCover);
         FPAScreen.OperableControls.progressBar.setStyle(
                 String.format(
                         "progress-color: rgb(%d, %d, %d);",
@@ -316,15 +290,6 @@ public class FPAControl {
                         (int) (progressColor.getBlue() * 255)
                 )
         );
-        if (Config.get("app.openAurora").value().bValue) {
-            PBackground background = new PBackground(
-                    FPAScreen.OperableControls.mainWindow.getScene().getWidth(),
-                    FPAScreen.OperableControls.mainWindow.getScene().getHeight(),
-                    colors
-            );
-            FPAScreen.OperableControls.root.getChildren().removeIf(child -> child instanceof PBackground);
-            FPAScreen.OperableControls.root.getChildren().addFirst(background);
-        }
     }
 
     private Event createOnPlayFinishHandler() {
@@ -335,7 +300,6 @@ public class FPAControl {
                 FPAScreen.OperableControls.cover.setImage(Resources.ImageRes.cover);
                 FPAScreen.OperableControls.progressBar.setStyle("progress-color: white;");
                 FPAScreen.OperableControls.progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-                FPAScreen.OperableControls.root.getChildren().removeIf(child -> child instanceof PBackground);
                 FPAScreen.setPauseButton(false);
                 FPAScreen.hideTitle();
                 FPAScreen.OperableControls.lyricsPane.release();
