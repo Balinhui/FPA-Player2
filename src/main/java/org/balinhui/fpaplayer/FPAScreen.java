@@ -36,7 +36,7 @@ public class FPAScreen extends Application {
 
     public static class OperableControls {
         public static Stage mainWindow;
-        public static VBox root;
+        public static StackPane root;
         public static ImageView cover;
         public static ProgressBar progressBar;
         public static LyricsPane lyricsPane;
@@ -70,8 +70,7 @@ public class FPAScreen extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        VBox root = new VBox();
-        OperableControls.root = root;
+        VBox foreground = new VBox();
 
         HBox mainPane = new HBox();
         VBox.setVgrow(mainPane, Priority.ALWAYS);
@@ -95,8 +94,11 @@ public class FPAScreen extends Application {
 
         bar.getChildren().addAll(progressBar, bottom);
 
-        root.getChildren().addAll(mainPane, bar);
-        addFileDrop(root);
+        foreground.getChildren().addAll(mainPane, bar);
+        addFileDrop(foreground);
+
+        StackPane root = new StackPane(foreground);
+        OperableControls.root = root;
 
         double width = Config.get("app.width").value().dValue;
         double height = Config.get("app.height").value().dValue;

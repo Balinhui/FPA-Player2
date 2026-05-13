@@ -28,6 +28,7 @@ public class Config {
             Map.entry("app.effectType", new ConfigPreference(ConfigType.STR, new ConfigValue("mica"))),
             Map.entry("app.fullScreen", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
             Map.entry("app.alwaysOnTop", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
+            Map.entry("app.openAurora", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
             Map.entry("lyric.position", new ConfigPreference(ConfigType.STR, new ConfigValue("center"))),
             Map.entry("lyric.translate", new ConfigPreference(ConfigType.BOOL, new ConfigValue("true"))),
             Map.entry("lyric.binding", new ConfigPreference(ConfigType.BOOL, new ConfigValue("false"))),
