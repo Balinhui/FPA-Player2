@@ -225,14 +225,14 @@ public class Player implements Runnable {
                 if (onPerSongFinish != null)
                     onPerSongFinish.handle(data.pos());
             } else {
-                CurrentStatus.updateTime(data.oldSamplesNumber());
+                Timer.updateTime(data.oldSamplesNumber());
                 boolean result = false;
                 switch (data.currentDataType()) {
                     case SHORT -> result = stream.write(data.getShortArray(), data.samplesNumber());
                     case FLOAT -> result = stream.write(data.getFloatArray(), data.samplesNumber());
                 }
                 if (result) {
-                    log.fatal("Write stream failed: output underflow");
+                    log.warn("Write stream failed: output underflow");
                 }
             }
         }

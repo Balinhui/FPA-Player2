@@ -2,7 +2,7 @@ package org.balinhui.fpaplayer.ui;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.ProgressBar;
-import org.balinhui.fpaplayer.core.CurrentStatus;
+import org.balinhui.fpaplayer.core.Timer;
 import org.balinhui.fpaplayer.ui.components.LyricsPane;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -54,7 +54,7 @@ public class UIPlayer {
                     progressBar.setProgress(currentPosition / totalTime);
 
                     if (counter > 3000) {
-                        syncTime((long) CurrentStatus.getCurrentTimeMillis());
+                        syncTime((long) Timer.getCurrentTimeMillis());
                         counter = 0;
                     }
                     counter++;

@@ -10,10 +10,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.balinhui.fpaplayer.core.CurrentStatus;
-import org.balinhui.fpaplayer.core.Decoder;
-import org.balinhui.fpaplayer.core.Event;
-import org.balinhui.fpaplayer.core.Player;
+import org.balinhui.fpaplayer.core.*;
 import org.balinhui.fpaplayer.info.OutputInfo;
 import org.balinhui.fpaplayer.info.SongInfo;
 import org.balinhui.fpaplayer.info.SystemInfo;
@@ -121,7 +118,7 @@ public class FPAControl {
             FPAScreen.setPauseButton(false);
         } else if (CurrentStatus.stateIs(CurrentStatus.States.PAUSE)) {
             CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
-            uiPlayer.syncTime( (long) CurrentStatus.getCurrentTimeMillis());
+            uiPlayer.syncTime( (long) Timer.getCurrentTimeMillis());
             uiPlayer.resume();
             FPAScreen.setPauseButton(true);
         }
@@ -235,7 +232,7 @@ public class FPAControl {
         }, index -> {
             if (index < paths.length) {
                 uiPlayer.stop();
-                CurrentStatus.resetTime(song.durationSeconds, song.totalSamples);
+                Timer.resetTime(song.durationSeconds, song.totalSamples);
                 Platform.runLater(() -> {
                     FPAScreen.OperableControls.lyricsPane.release();
                     FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
@@ -258,7 +255,7 @@ public class FPAControl {
 
     private void playSong(SongInfo song, OutputInfo output, Event onDecodeFinish,
                           Event onPerSongFinish) {
-        CurrentStatus.resetTime(song.durationSeconds, song.totalSamples);
+        Timer.resetTime(song.durationSeconds, song.totalSamples);
         decoder.start(output, onDecodeFinish);
         //更新UI
         FPAScreen.OperableControls.lyricsPane.setLyrics(Lyrics.parse(song.metadata));
