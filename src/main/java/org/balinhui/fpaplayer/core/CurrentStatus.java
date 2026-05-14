@@ -5,18 +5,18 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CurrentStatus {
     private static final AtomicReference<States> state = new AtomicReference<>(States.STOP);
 
-    public static synchronized void stateTo(States newState) {
+    protected static synchronized void stateTo(States newState) {
         States tmp = state.get();
         state.set(newState);
         if (tmp == States.PAUSE)
             CurrentStatus.class.notify();
     }
 
-    public static synchronized boolean stateIs(States check) {
+    protected static synchronized boolean stateIs(States check) {
         return state.get() == check;
     }
 
-    public static synchronized boolean waitUntilNotPaused(Player player) throws InterruptedException {
+    protected static synchronized boolean waitUntilNotPaused(Player player) throws InterruptedException {
         boolean flag = false;
         while (stateIs(States.PAUSE)) {
             flag = true;
@@ -24,6 +24,44 @@ public class CurrentStatus {
             CurrentStatus.class.wait();
         }
         return flag;
+    }
+
+    public static boolean isPlaying() {
+        return stateIs(States.PLAYING);
+    }
+
+    public static boolean isPausing() {
+        return stateIs(States.PAUSE);
+    }
+
+    public static boolean isStopping() {
+        return stateIs(States.STOP);
+    }
+
+    public static void pause() {
+        stateTo(States.PAUSE);
+    }
+
+    public static void play() {
+        stateTo(States.PLAYING);
+    }
+
+    protected static boolean allowDecode() {
+        return stateIs(States.PLAYING) || stateIs(States.PAUSE);
+    }
+
+    protected static boolean allowPlay() {
+        return !stateIs(States.STOP) && !stateIs(States.CLOSE);
+    }
+
+    public static void setNext() {
+        if (stateIs(States.PLAYING) || stateIs(States.PAUSE))
+            stateTo(States.NEXT);
+    }
+
+    public static void closeApp() {
+        if (stateIs(States.PLAYING) || stateIs(States.PAUSE))
+            stateTo(States.CLOSE);
     }
 
     public enum States {

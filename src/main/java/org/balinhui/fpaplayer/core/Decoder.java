@@ -226,7 +226,7 @@ public class Decoder implements Runnable {
 
     @Override
     public void run() {
-        CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
+        CurrentStatus.play();
         for (int i = 0; i < paths.length; i++) {
             if (paths[i] == null) continue;
             log.trace("解码开始");
@@ -296,8 +296,7 @@ public class Decoder implements Runnable {
             }
             boolean draining = false;
             BytePointer[] rawData = new BytePointer[1];
-            mainLoop: while (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
-                    CurrentStatus.stateIs(CurrentStatus.States.PAUSE)) {
+            mainLoop: while (CurrentStatus.allowDecode()) {
                 int ret;
                 if (av_read_frame(fmtCtx, packet) < 0) {
                     draining = true;

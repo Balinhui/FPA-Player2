@@ -84,9 +84,7 @@ public class FPAControl {
 
     public void stop() {
         log.trace("停止开始");
-        if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) || CurrentStatus.stateIs(CurrentStatus.States.PAUSE)) {
-            CurrentStatus.stateTo(CurrentStatus.States.CLOSE);
-        }
+        CurrentStatus.closeApp();
         Config.storeConfig();
         player.terminate();
         Runtime.getRuntime().addShutdownHook(new Thread(NativeLibraryLoader::cleanup));
@@ -94,7 +92,7 @@ public class FPAControl {
     }
 
     public void onChooseFile() {
-        if (!CurrentStatus.stateIs(CurrentStatus.States.STOP))
+        if (!CurrentStatus.isStopping())
             return;
         String[] paths;
         try {
@@ -112,12 +110,14 @@ public class FPAControl {
     }
 
     public void onPause() {
-        if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING)) {
-            CurrentStatus.stateTo(CurrentStatus.States.PAUSE);
+        if (CurrentStatus.isPlaying()) {
+            //CurrentStatus.stateTo(CurrentStatus.States.PAUSE);
+            CurrentStatus.pause();
             uiPlayer.pause();
             FPAScreen.setPauseButton(false);
-        } else if (CurrentStatus.stateIs(CurrentStatus.States.PAUSE)) {
-            CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
+        } else if (CurrentStatus.isPausing()) {
+            //CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
+            CurrentStatus.play();
             uiPlayer.syncTime( (long) Timer.getCurrentTimeMillis());
             uiPlayer.resume();
             FPAScreen.setPauseButton(true);
@@ -125,8 +125,7 @@ public class FPAControl {
     }
 
     public void onNext() {
-        if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) || CurrentStatus.stateIs(CurrentStatus.States.PAUSE))
-            CurrentStatus.stateTo(CurrentStatus.States.NEXT);
+        CurrentStatus.setNext();
     }
 
     public void onOpenSettingWindow() {
@@ -141,7 +140,7 @@ public class FPAControl {
     }
 
     public void onDragOver(DragEvent dragEvent) {
-        if (!CurrentStatus.stateIs(CurrentStatus.States.STOP)) {
+        if (!CurrentStatus.isStopping()) {
             dragEvent.consume();
             return;
         }

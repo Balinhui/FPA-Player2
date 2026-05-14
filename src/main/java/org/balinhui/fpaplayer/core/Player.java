@@ -202,8 +202,7 @@ public class Player implements Runnable {
             CurrentStatus.stateTo(CurrentStatus.States.STOP);
             buffer.clear();
         }
-        while (!buffer.isEmpty() ||
-                (!CurrentStatus.stateIs(CurrentStatus.States.STOP) && !CurrentStatus.stateIs(CurrentStatus.States.CLOSE))) {
+        while (!buffer.isEmpty() || CurrentStatus.allowPlay()) {
             boolean paused;//用于判断是否暂停了的标识，如果是从暂停中启动，则为true。防止提前退出
             try {
                 paused = CurrentStatus.waitUntilNotPaused(this);
