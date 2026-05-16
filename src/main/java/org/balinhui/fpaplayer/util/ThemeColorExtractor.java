@@ -11,7 +11,9 @@ public class ThemeColorExtractor {
     private ThemeColorExtractor() {}
 
     public static Color extractDominantColor(Image image) {
-        return extractPalette(image, 3).getFirst();
+       List<Color> extractColor = extractPalette(image, 3);
+       if (!extractColor.isEmpty()) return extractColor.getFirst();
+       return Color.WHITE;
     }
 
     public static List<Color> extractPalette(Image image, int k) {
