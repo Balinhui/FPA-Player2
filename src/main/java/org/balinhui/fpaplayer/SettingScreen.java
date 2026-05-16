@@ -43,6 +43,9 @@ public class SettingScreen {
     private final Class<Resources.StringRes.SettingStringRes> settingStringResClass;
     private long tmpHwnd;
 
+    private static final Color WHITE_BACKGROUND = Color.rgb(252, 254, 255);
+    private static final Color BLACK_BACKGROUND = Color.rgb(35, 36, 36);
+
     private SettingScreen() {
         control = SettingControl.getControl();
         stage = new Stage();
@@ -95,8 +98,8 @@ public class SettingScreen {
 
             if (!NativeAPI.setDarkModeForOthers(tmpHwnd, Config.get("app.darkMode").value().bValue)) {
                 if (Config.get("app.darkMode").value().bValue)
-                    root.setBackground(Background.fill(Color.BLACK));
-                else root.setBackground(Background.fill(Color.WHITE));
+                    root.setBackground(Background.fill(BLACK_BACKGROUND));
+                else root.setBackground(Background.fill(WHITE_BACKGROUND));
             }
         }));
     }
@@ -316,7 +319,7 @@ public class SettingScreen {
         screen.menuBar.setDarkMode(darkMode);
         screen.toggles.forEach(pSliderToggle -> pSliderToggle.setDarkMode(darkMode));
         if (darkMode) {
-            if (!hr) screen.root.setBackground(Background.fill(Color.BLACK));
+            if (!hr) screen.root.setBackground(Background.fill(BLACK_BACKGROUND));
             screen.texts.forEach(text -> text.setTextFill(Color.WHITE));
             screen.choiceBoxes.forEach(choiceBox -> choiceBox.setStyle(
                     "choice-box-background-color: #343536;" +
@@ -326,7 +329,7 @@ public class SettingScreen {
                             "choice-box-icon-color: #4cc2ff;"
             ));
         } else {
-            if (!hr) screen.root.setBackground(Background.fill(Color.WHITE));
+            if (!hr) screen.root.setBackground(Background.fill(WHITE_BACKGROUND));
             screen.texts.forEach(text -> text.setTextFill(Color.BLACK));
             screen.choiceBoxes.forEach(choiceBox -> choiceBox.setStyle(
                     "choice-box-background-color: white;" +
