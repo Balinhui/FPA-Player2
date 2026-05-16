@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -23,8 +22,8 @@ public final class LyricLine extends VBox {
     private boolean darkMode;
     private final GaussianBlur blur = new GaussianBlur();
 
-    private static final Paint GRAY_WHITE = Color.rgb(190, 190, 190);
-    private static final Paint GRAY_DARK = Color.rgb(65, 65, 65);
+    private static final Color GRAY_WHITE = Color.rgb(190, 190, 190);
+    private static final Color GRAY_DARK = Color.rgb(65, 65, 65);
     private static final double BLUR_RADIUS = 3.0;
     private static final double RATE = 0.06;
     private static final double MAX_FONT_SIZE = 40;

@@ -61,6 +61,8 @@ public class FPAScreen extends Application {
     private FPAControl control;
 
     private static final double ANIMATION_TIME = 120;//ms
+    private static final Color WHITE_BACKGROUND = Color.rgb(239, 251, 255);
+    private static final Color BLACK_BACKGROUND = Color.rgb(36, 38, 38);
 
     @Override
     public void init() throws Exception {
@@ -175,9 +177,9 @@ public class FPAScreen extends Application {
         boolean hr = NativeAPI.setDarkMode(Config.get("app.darkMode").value().bValue);
         if (!hr) {
             if (Config.get("app.darkMode").value().bValue) {
-                root.setBackground(Background.fill(Color.BLACK));
+                root.setBackground(Background.fill(BLACK_BACKGROUND));
             } else {
-                root.setBackground(Background.fill(Color.WHITE));
+                root.setBackground(Background.fill(WHITE_BACKGROUND));
             }
         }
     }
@@ -484,10 +486,10 @@ public class FPAScreen extends Application {
         fullScreen.setDarkMode(darkMode);
         OperableControls.lyricsPane.setDarkMode(darkMode);
         if (darkMode) {
-            if (!hr) OperableControls.root.setBackground(Background.fill(Color.BLACK));
+            if (!hr) OperableControls.root.setBackground(Background.fill(BLACK_BACKGROUND));
             title.setTextFill(Color.WHITE);
         } else {
-            if (!hr) OperableControls.root.setBackground(Background.fill(Color.WHITE));
+            if (!hr) OperableControls.root.setBackground(Background.fill(WHITE_BACKGROUND));
             title.setTextFill(Color.BLACK);
         }
     }
