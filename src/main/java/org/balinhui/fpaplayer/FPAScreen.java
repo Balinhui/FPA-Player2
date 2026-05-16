@@ -61,8 +61,8 @@ public class FPAScreen extends Application {
     private FPAControl control;
 
     private static final double ANIMATION_TIME = 120;//ms
-    private static final Color WHITE_BACKGROUND = Color.rgb(239, 251, 255);
-    private static final Color BLACK_BACKGROUND = Color.rgb(36, 38, 38);
+    private static final Color WHITE_BACKGROUND = Color.rgb(252, 254, 255);
+    private static final Color BLACK_BACKGROUND = Color.rgb(35, 36, 36);
 
     @Override
     public void init() throws Exception {
