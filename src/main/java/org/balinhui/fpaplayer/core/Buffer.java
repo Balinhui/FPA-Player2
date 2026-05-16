@@ -136,8 +136,10 @@ public class Buffer {
 
     public void clearArray() {
         clear();
-        shortData.clear();
-        floatData.clear();
+        synchronized (instance) {
+            shortData.clear();
+            floatData.clear();
+        }
     }
 
     public record Data(int samplesNumber, int oldSamplesNumber, int pos, DataType currentDataType, boolean end) {

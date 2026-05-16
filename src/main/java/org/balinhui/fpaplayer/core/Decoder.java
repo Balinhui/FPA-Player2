@@ -297,6 +297,10 @@ public class Decoder implements Runnable {
             boolean draining = false;
             BytePointer[] rawData = new BytePointer[1];
             mainLoop: while (CurrentStatus.allowDecode()) {
+                if (CurrentEvents.hasEvents() && CurrentEvents.poll() == CurrentEvents.Event.NEXT) {
+                    buffer.clearArray();
+                    break;
+                }
                 int ret;
                 if (av_read_frame(fmtCtx, packet) < 0) {
                     draining = true;
@@ -363,27 +367,20 @@ public class Decoder implements Runnable {
             avcodec_free_context(codecCtx);
             av_frame_free(frame);
             av_packet_free(packet);
-            if (onDecodeFinish != null) {
-                if (CurrentStatus.stateIs(CurrentStatus.States.PLAYING) ||
-                 CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
+
+            if (onDecodeFinish != null) {//onDecodeFinish不为null，说明有多首歌需要播放
+                if (CurrentStatus.isPlaying()) {
                     onDecodeFinish.handle(i + 1);//对下一首歌预读
-                    if (CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
-                        CurrentStatus.stateTo(CurrentStatus.States.PLAYING);
-                        buffer.clear();
-                    }
                     buffer.putEndInfo(i + 1);
-                } else if (CurrentStatus.stateIs(CurrentStatus.States.CLOSE)) {
+                } else if (CurrentStatus.isClosed()) {
                     buffer.clear();
                     break;
                 }
-            } else if (CurrentStatus.stateIs(CurrentStatus.States.CLOSE)) {
+            } else if (CurrentStatus.isClosed())
                 buffer.clear();
-            } else if (CurrentStatus.stateIs(CurrentStatus.States.NEXT)) {
-                buffer.clear();
-            }
         }
-        if (!CurrentStatus.stateIs(CurrentStatus.States.CLOSE))
-            CurrentStatus.stateTo(CurrentStatus.States.STOP);
+        if (!CurrentStatus.isClosed())
+            CurrentStatus.stop();
         log.trace("当前解码结束");
     }
 

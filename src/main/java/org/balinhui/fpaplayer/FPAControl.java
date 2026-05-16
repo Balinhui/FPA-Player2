@@ -84,7 +84,7 @@ public class FPAControl {
 
     public void stop() {
         log.trace("停止开始");
-        CurrentStatus.closeApp();
+        CurrentStatus.close();
         Config.storeConfig();
         player.terminate();
         Runtime.getRuntime().addShutdownHook(new Thread(NativeLibraryLoader::cleanup));
@@ -92,7 +92,7 @@ public class FPAControl {
     }
 
     public void onChooseFile() {
-        if (!CurrentStatus.isStopping())
+        if (!CurrentStatus.isStopped())
             return;
         String[] paths;
         try {
@@ -125,7 +125,13 @@ public class FPAControl {
     }
 
     public void onNext() {
-        CurrentStatus.setNext();
+        //CurrentStatus.setNext();
+        if (CurrentStatus.isPlaying())
+            CurrentEvents.put(CurrentEvents.Event.NEXT);
+        if (CurrentStatus.isPausing()) {
+            CurrentEvents.put(CurrentEvents.Event.NEXT);
+            CurrentStatus.play();
+        }
     }
 
     public void onOpenSettingWindow() {
@@ -140,7 +146,7 @@ public class FPAControl {
     }
 
     public void onDragOver(DragEvent dragEvent) {
-        if (!CurrentStatus.isStopping()) {
+        if (!CurrentStatus.isStopped()) {
             dragEvent.consume();
             return;
         }

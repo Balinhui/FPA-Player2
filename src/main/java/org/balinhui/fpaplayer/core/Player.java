@@ -199,19 +199,19 @@ public class Player implements Runnable {
                     MessageFlags.Buttons.RETRY_CANCEL | MessageFlags.Icons.WARNING
             );
             if (ret == MessageFlags.ReturnValue.RETRY) run();
-            CurrentStatus.stateTo(CurrentStatus.States.STOP);
+            CurrentStatus.stop();
             buffer.clear();
         }
         while (!buffer.isEmpty() || CurrentStatus.allowPlay()) {
             boolean paused;//用于判断是否暂停了的标识，如果是从暂停中启动，则为true。防止提前退出
             try {
-                paused = CurrentStatus.waitUntilNotPaused(this);
+                paused = CurrentStatus.waitIfPaused(this);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 paused = true;
             }
             if (paused) {
-                if (CurrentStatus.stateIs(CurrentStatus.States.CLOSE)) {
+                if (CurrentStatus.isClosed()) {
                     buffer.clear();
                     break;
                 }

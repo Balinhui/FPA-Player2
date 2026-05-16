@@ -35,8 +35,11 @@ public class Resample {
         this.dstSampleRate = info.sampleRate;
         this.dstSampleFormat = info.sampleFormat;
         dstData = new PointerPointer<>((Pointer) null);
-        AVChannelLayout srcLayout = new AVChannelLayout().nb_channels(srcChannels);
-        AVChannelLayout dstLayout = new AVChannelLayout().nb_channels(dstChannels);
+        AVChannelLayout srcLayout = new AVChannelLayout();//.nb_channels(srcChannels);
+        AVChannelLayout dstLayout = new AVChannelLayout();//.nb_channels(dstChannels);
+        av_channel_layout_default(srcLayout, srcChannels);
+        av_channel_layout_default(dstLayout, dstChannels);
+
         swrCtx = swr_alloc();
         if (swrCtx == null) {
             log.fatal("SwrContext分配失败");
@@ -80,7 +83,12 @@ public class Resample {
                 dstSampleRate, srcSampleRate, AV_ROUND_UP
         );
         if (dstSamples > maxDstSamples) {
-            av_freep(dstData.position(0));
+            //av_freep(dstData.position(0));
+            BytePointer old = dstData.get(BytePointer.class, 0);
+            if (old != null && !old.isNull()) {
+                av_free(old);
+            }
+
             ret = av_samples_alloc(dstData, null, dstChannels, dstSamples, dstSampleFormat, 1);
             if (ret < 0) {
                 log.fatal("分配内存失败");
