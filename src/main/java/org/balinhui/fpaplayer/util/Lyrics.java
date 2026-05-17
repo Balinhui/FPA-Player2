@@ -18,10 +18,16 @@ public class Lyrics {
 
     public static TreeMap<Long, List<String>> parse(Map<String, String> metadata) {
         String lyrics = "[00:00.00]纯音乐，请欣赏";
+        List<String> lyricsKey = new ArrayList<>();
         for (String s : metadata.keySet()) {
             Matcher matcher = lyricsPattern.matcher(s);
-            if (matcher.find()) {
-                if (s.contains("XX")) continue;//不接受逐字歌词
+            if (matcher.find()) lyricsKey.add(s);
+        }
+        if (lyricsKey.size() == 1) {
+            lyrics = metadata.get(lyricsKey.getFirst());
+        } else {
+            for (String s : lyricsKey) {
+                if (s.contains("XX")) continue;
                 lyrics = metadata.get(s);
                 break;
             }
