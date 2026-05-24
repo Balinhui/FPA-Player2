@@ -105,7 +105,8 @@ public class FPAControl {
             );
             return;
         }
-        if (paths == null) return;
+        if (paths == null || !CurrentStatus.isStopped())
+            return;
         inputPaths(paths);
     }
 
@@ -306,6 +307,7 @@ public class FPAControl {
                 FPAScreen.hideTitle();
                 FPAScreen.OperableControls.lyricsPane.release();
             });
+            song = null;
         };
     }
 }
