@@ -78,7 +78,6 @@ public class Decoder implements Runnable {
                 );
                 return null;
             }
-            log.trace("打开文件");
             if (avformat_find_stream_info(fmtCtx, (PointerPointer<?>) null) < 0) {
                 log.error("找不到流信息");
                 ErrorHandler.displayErrorMessage((Exception) null, "Cant find stream info");
@@ -137,7 +136,6 @@ public class Decoder implements Runnable {
             avformat_close_input(fmtCtx);
             avformat_free_context(fmtCtx);
             fmtCtx.deallocate();
-            log.trace("释放资源");
         }
     }
 

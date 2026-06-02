@@ -67,6 +67,7 @@ public class FlacCoverExtractor {
         int picLen = dis.readInt();
         byte[] imageData = new byte[picLen];
         dis.readFully(imageData);
+        dis.close();
 
         return imageData;
     }
