@@ -376,9 +376,11 @@ public class Decoder implements Runnable {
                 }
             } else if (CurrentStatus.isClosed())
                 buffer.clear();
+            else buffer.putEndInfo(-1);
         }
         if (!CurrentStatus.isClosed())
             CurrentStatus.stop();
+        paths = null;
         log.trace("当前解码结束");
     }
 
