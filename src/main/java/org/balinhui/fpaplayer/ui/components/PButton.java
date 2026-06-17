@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 
 import java.util.List;
 
-public final class PButton extends Button {
+public final class PButton extends Button implements ComponentAction {
     private List<String> lightColors;
     private List<String> darkColors;
     private Image lightImage;
@@ -48,6 +48,7 @@ public final class PButton extends Button {
         setAppearance();
     }
 
+    @Override
     public void setDarkMode(boolean darkMode) {
         if (darkMode == this.darkMode) return;
         this.darkMode = darkMode;

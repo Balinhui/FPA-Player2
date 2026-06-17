@@ -15,7 +15,7 @@ import org.balinhui.fpaplayer.util.Config;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class LyricLine extends VBox {
+public final class LyricLine extends VBox implements ComponentAction {
     private final long time;
     private final List<Label> labels = new ArrayList<>();
     private boolean highlight = false;
@@ -99,6 +99,7 @@ public final class LyricLine extends VBox {
         }
     }
 
+    @Override
     public void setDarkMode(boolean darkMode) {
         this.darkMode = darkMode;
         if (darkMode) {

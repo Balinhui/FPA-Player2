@@ -10,7 +10,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public final class PSliderToggle extends ToggleButton {
+public final class PSliderToggle extends ToggleButton implements ComponentAction {
     private final PSliderToggleSkin skin;
 
     public PSliderToggle() {
@@ -46,6 +46,7 @@ public final class PSliderToggle extends ToggleButton {
         }
     }
 
+    @Override
     public void setDarkMode(boolean darkMode) {
         skin.setDarkMode(darkMode);
     }

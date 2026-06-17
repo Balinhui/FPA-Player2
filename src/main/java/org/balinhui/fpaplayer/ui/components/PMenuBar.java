@@ -8,7 +8,7 @@ import javafx.scene.layout.HBox;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class PMenuBar extends HBox {
+public final class PMenuBar extends HBox implements ComponentAction {
     private final Map<String, PButton> buttonMap = new HashMap<>();
     public PMenuBar() {
         setAlignment(Pos.CENTER);
@@ -36,6 +36,7 @@ public final class PMenuBar extends HBox {
         return buttons;
     }
 
+    @Override
     public void setDarkMode(boolean darkMode) {
         buttonMap.forEach((name, button) -> {
             button.setDarkMode(darkMode);

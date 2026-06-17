@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public final class LyricsPane extends ScrollPane {
+public final class LyricsPane extends ScrollPane implements ComponentAction {
     private final VBox lyricsContainer;
     private final List<LyricLine> realLyrics = new ArrayList<>();
     private Timeline scrollTimeLine;
@@ -80,6 +80,7 @@ public final class LyricsPane extends ScrollPane {
         }
     }
 
+    @Override
     public void setDarkMode(boolean darkMode) {
         if (darkMode) {
             setStyle(
