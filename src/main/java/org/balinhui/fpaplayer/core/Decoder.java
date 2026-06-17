@@ -296,7 +296,7 @@ public class Decoder implements Runnable {
             BytePointer[] rawData = new BytePointer[1];
             mainLoop: while (CurrentStatus.allowDecode()) {
                 if (CurrentEvents.hasEvents() && CurrentEvents.poll() == CurrentEvents.Event.NEXT) {
-                    buffer.clearArray();
+                    buffer.clear();
                     break;
                 }
                 int ret;
